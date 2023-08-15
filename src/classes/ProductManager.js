@@ -1,11 +1,14 @@
+import { triggerAsyncId } from 'async_hooks'
 import fs from 'fs'
 
 export default class ProductManager {
     constructor (path){
         this.path = path
     }
-    addProduct = async(title,description,price,thumbnail,code,stock) =>{
+    addProduct = async(product) =>{
         try{const products = await this.getProducts()
+
+            console.log(product)
         
             let id = 0
             let length = products.length
@@ -18,8 +21,8 @@ export default class ProductManager {
                     if(element.id > id){
                         id = element.id // ME QUEDO CON EL ID MAS ALTO ASI SE QUE LUEGO AL AGREGAR 1 NO REPITO LOS VALORES
                     }
-                    if(element.code === code){
-                        cod = code
+                    if(element.code === product.code){
+                        cod = product.code
                     }
                 } )
                 id += 1
@@ -29,21 +32,24 @@ export default class ProductManager {
                 return // SI EL CODIGO SE DUPLICO RETORNO ANTES DE AGREGAR AL PRODUCTO
             }
             
-            const product = {title: title,
-                description: description,
-                price: price,
-                thumbnail: thumbnail,
-                code: code,
-                stock: stock,
-                id: id          
+            const element = {
+                    title : product.title,
+                    description : product.description,
+                    code : product.code,
+                    price : product.price,
+                    status : true,
+                    stock : product.stock,
+                    category : product.category,
+                    thumbnails : product.thumbnails,
+                    id : id
             }
 
-            products.push(product)
+            products.push(element)
 
             await fs.promises.writeFile(this.path,JSON.stringify(products)) // REESCRIBO UN NUEVO ARRAY CON EL PRODUCTO AGREGADO
         
         }catch(err){
-            console.error(error)
+            console.error(err)
 
         }        
     }
@@ -110,6 +116,12 @@ export default class ProductManager {
     }
     getIndexProduct = (array,id) => {
         return (array.findIndex((el) => el.id === id))
+    }
+    idExist = async(id) => {
+        const products = await this.getProducts();
+        const exist = products.some(el => el.id === id);
+        console.log(exist);
+        return exist;
     }
 }
 
