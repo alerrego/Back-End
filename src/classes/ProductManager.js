@@ -1,4 +1,3 @@
-import { triggerAsyncId } from 'async_hooks'
 import fs from 'fs'
 
 export default class ProductManager {
@@ -7,8 +6,6 @@ export default class ProductManager {
     }
     addProduct = async(product) =>{
         try{const products = await this.getProducts()
-
-            console.log(product)
         
             let id = 0
             let length = products.length
@@ -29,7 +26,7 @@ export default class ProductManager {
             }
     
             if(cod != ""){
-                return // SI EL CODIGO SE DUPLICO RETORNO ANTES DE AGREGAR AL PRODUCTO
+                return -1 // SI EL CODIGO SE DUPLICO RETORNO ANTES DE AGREGAR AL PRODUCTO
             }
             
             const element = {
@@ -120,7 +117,6 @@ export default class ProductManager {
     idExist = async(id) => {
         const products = await this.getProducts();
         const exist = products.some(el => el.id === id);
-        console.log(exist);
         return exist;
     }
 }

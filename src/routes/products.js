@@ -35,9 +35,12 @@ router.get('/:pid', async(req,res) => {
 router.post('/', async(req,res) => {
     const product = req.body;
 
-    await ControladorDeProductos.addProduct(product)
+    if(await ControladorDeProductos.addProduct(product) != -1){
+        res.send({status : 'succes'})
+    }else{
+        res.status(404).send(`Codigo de producto ya existente`)
+    }
 
-    res.send({status : 'succes'})
 
 })
 

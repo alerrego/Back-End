@@ -89,5 +89,17 @@ export default class CartManager {
     
         await fs.promises.writeFile(this.path,JSON.stringify(carts))
         
-    }        
+    };
+    deleteCart = async(cartID) =>{
+        const carts = await this.getCarts();
+        const indexCart = carts.findIndex((cart) => cart.id === cartID)
+
+        if(indexCart == -1){
+            return -1
+        }
+
+        carts.splice(indexCart,1)
+
+        await fs.promises.writeFile(this.path,JSON.stringify(carts))
+    }       
 }
