@@ -19,7 +19,7 @@ const updateProductList = (products) => {
               <h3>Descripcion: ${product.description}</h3>
               <h3>Precio: ${product.price}</h3>
               <h3>Stock: ${product.stock}</h3>
-              <h3>ID: ${product.id}</h3>
+              <h3>ID: ${product._id}</h3>
             </div>
         </div>
     </div>`;
@@ -65,3 +65,4 @@ const updateProductList = (products) => {
  socket.on("update", (obj) => {
     updateProductList(obj);
   });
+  
