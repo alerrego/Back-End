@@ -6,7 +6,7 @@ const cartsCollection = 'carts';
   const cartSchema = new mongoose.Schema({
     cartID : {
         type : mongoose.Types.ObjectId,
-        default : mongoose.Types.ObjectId
+        default : new mongoose.Types.ObjectId
     },
     products : {
         type : Array,

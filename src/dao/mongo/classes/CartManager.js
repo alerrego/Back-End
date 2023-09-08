@@ -12,7 +12,7 @@ export default class CartManager {
         return carts
     }
     createCart = async() =>{
-            const newCart = await cartModel.insertMany(); //TUVE QUE PONER .insertMany(), porque .create daba null
+            const newCart = await cartModel.insertMany() //TUVE QUE PONER .insertMany(), porque .create daba null
             return newCart
     }
     AddProduct = async(cartID,productID) =>{

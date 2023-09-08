@@ -11,7 +11,6 @@ router.get('/', async(req,res) =>{
     const carts = await ManejadorDeCarritos.getCarts()
     res.send({status:'succes',payload:carts});
 })
-
 router.post('/', async(req,res) =>{
         const newCart = await ManejadorDeCarritos.createCart()
         res.send({status:'succes', payload: newCart})
