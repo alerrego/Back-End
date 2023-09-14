@@ -1,0 +1,26 @@
+<div>
+    {{#each this.docs}}
+    <div>
+        <h2>{{this.title}}</h2>
+        <p>Descripcion: {{this.description}}</p>
+        <p>Codigo: {{this.code}}</p>
+        <p>Precio: {{this.price}}</p>
+        <p>Stock: {{this.stock}}</p>
+        <p>Categoria: {{this.category}}</p>
+        <p>Imagenes: {{this.thumbnails}}</p>
+        <p>ID: {{this._id}}</p>
+        <a><button>Add to cart</button></a>
+    </div>                                            
+    {{/each}}
+    <br>
+    <div>
+        {{#if hasPrevPage}}
+        <a href="/products?page={{prevPage}}"><button>Previous page</button></a>
+        {{/if}}
+    </div>
+    <div>
+        {{#if hasNextPage}}
+        <a href="/products?page={{nextPage}}"><button>Next page</button></a>
+        {{/if}}
+    </div>
+</div>

@@ -4,12 +4,16 @@ export default class ProductManager {
     constructor (){
 
     }
-    getProducts = async(limit) =>{
-        if(limit){
-            const productsLimit = await productModel.find().limit(limit).lean()
-            return productsLimit
-        }else{
-            const products = await productModel.find().lean()
+    getProducts = async(limit,page,sort,stock,category) =>{
+        if(stock != 1){
+            const productsStock = await productModel.paginate({stock:{$gte:stock}},{limit : limit,page: page,sort:{price:sort}})
+            return productsStock
+        }else if((category != undefined)&&(stock == 1)){
+            const productsCategory = await productModel.paginate({category:{$eq:category}},{limit : limit,page: page,sort:{price:sort}})
+            return productsCategory
+        }
+        else{
+            const products = await productModel.paginate({},{limit : limit,page: page,sort:{price:sort}})
             return products
         }
     }
@@ -28,6 +32,14 @@ export default class ProductManager {
         }catch(error){
             throw error
         }
+    }
+    addProducts = async(data) =>{
+        try{
+            const products = await productModel.insertMany(data)
+            return products
+         }catch(error){
+             throw error
+         }
     }
     updateProduct = async(id,data) =>{
         try{
