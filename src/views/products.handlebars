@@ -1,4 +1,13 @@
 <div>
+    <div>
+        <h2>Welcome {{user.name}}</h2>
+        <p>Email: {{user.email}}</p>
+        <p>Age: {{user.age}}</p>
+        <p>Role: {{user.role}}</p>
+        <br>
+        <a href="/login" id="logOut">Log Out</a>
+    </div>
+    <br>
     {{#each this.docs}}
     <div>
         <h2>{{this.title}}</h2>
@@ -24,3 +33,5 @@
         {{/if}}
     </div>
 </div>
+
+<script src="/js/products.js"></script>

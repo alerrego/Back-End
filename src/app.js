@@ -1,9 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+
 
 import productRouter from '../src/dao/mongo/routes/products.js'
 import cartRouter from '../src/dao/mongo/routes/carts.js'
 import viewsRouter from '../src/dao/mongo/routes/views.js'
+import sessionRouter from '../src/dao/mongo/routes/sessions.js'
 
 import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
@@ -14,17 +19,36 @@ import MessageManager from '../src/dao/mongo/classes/MessageManager.js'
 
 const app = express()
 
+//LOGIN
+app.use(cookieParser());
+app.use(session({
+  store: MongoStore.create({
+    mongoUrl: "mongodb+srv://Rego:123@cluster0.h8wbe8w.mongodb.net/ecommerce",
+    mongoOptions: {
+      useNewUrlParser:true,
+    },
+    ttl:1000
+  }),
+  secret:"asd123",
+  resave:false,
+  saveUninitialized:false
+}))
+
+//MIDDLEWARES
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname+'/public'));
 
+//CONFIGURACION HANDLEBARS
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views');
 app.set('view engine', 'handlebars');
 
+//RUTAS
 app.use('/api/products' , productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/', viewsRouter)
+app.use('/api/sessions',sessionRouter)
 
 const server = app.listen(8080, () =>{
     console.log('En linea desde el puerto 8080')
