@@ -9,6 +9,16 @@ router.post("/login", async(req,res) =>{
     if(!user){
         return res.status(400).send({status:'error',error:'incorrect data'})
     }
+
+    if((email === "adminCoder@coder.com")&&(password === "adminCod3r123")){
+        req.session.user = {
+            name: `${user.first_name} ${user.last_name}`,
+            email: user.email,
+            age: user.age,
+            role: "admin"
+        }
+       return res.send({status:'succes',payload:req.session.user})
+    }
     req.session.user = {
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
@@ -25,20 +35,6 @@ router.post("/register", async(req,res) =>{
 
     if(exist){
         return res.status(400).send({status:'error',error:'email alredy used'})
-    }
-
-    if((email === "adminCoder@coder.com")&&(password === "adminCod3r123")){
-        const admin = {
-                first_name,
-                last_name,
-                email,
-                age,
-                password,
-                role: "admin"
-            }
-            let added = await userModel.create(admin);
-
-           return res.status(200).send({status:'succes',message:'Admin registered'})
     }
 
     const user = {

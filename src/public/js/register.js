@@ -11,6 +11,25 @@ form.addEventListener('submit', e =>{
         headers: {
             'Content-Type':'application/json'
         }
+    }).then(res => {
+        if(res.status === 400){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Your email is alredy used!',
+                footer: '<a href="">Why do I have this issue?</a>'
+              })
+        }else if(res.status === 200){
+            Swal.fire({
+                icon: 'success',
+                title: 'You have registered!',
+                text: 'Welcome!',
+                footer: '<a href="">Why do I have this issue?</a>'
+              });
+            setTimeout(() => {
+            window.location.replace('/login')
+            }, 2500); 
+        }
     })
     form.reset()
 })

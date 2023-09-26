@@ -15,6 +15,12 @@ form.addEventListener('submit',e =>{
         if(res.status === 200){
             window.location.replace('/products')
         }
+        else if(res.status === 400){
+            Swal.fire({
+                icon: 'error',
+                title: 'Incorrect data!',
+              })
+        }
     })
     form.reset()
 })
