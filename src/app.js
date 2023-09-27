@@ -17,6 +17,9 @@ import { Server } from 'socket.io';
 import ProductManager from '../src/dao/mongo/classes/ProductManager.js'
 import MessageManager from '../src/dao/mongo/classes/MessageManager.js'
 
+import passport from 'passport';
+import initializePassport from './config/passport.js';
+
 const app = express()
 
 //LOGIN
@@ -33,6 +36,11 @@ app.use(session({
   resave:false,
   saveUninitialized:false
 }))
+
+//PASSPORT
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 //MIDDLEWARES
 app.use(express.json());
@@ -54,6 +62,8 @@ const server = app.listen(8080, () =>{
     console.log('En linea desde el puerto 8080')
 })
 
+
+//MONGOOSE
 mongoose.connect('mongodb+srv://Rego:123@cluster0.h8wbe8w.mongodb.net/ecommerce')
 const ControladorDeProductos = new ProductManager()
 const ControladorDeMensajes = new MessageManager()

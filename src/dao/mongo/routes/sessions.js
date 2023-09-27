@@ -1,54 +1,52 @@
 import { Router } from "express";
-import { userModel } from "../models/user.js";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/login", async(req,res) =>{
-    const {email,password} = req.body;
-    const user = await userModel.findOne({email, password})
-    if(!user){
-        return res.status(400).send({status:'error',error:'incorrect data'})
-    }
+router.post('/github', passport.authenticate('github',{scope:['user:email']}),async(req,res)=>{
 
-    if((email === "adminCoder@coder.com")&&(password === "adminCod3r123")){
-        req.session.user = {
-            name: `${user.first_name} ${user.last_name}`,
-            email: user.email,
-            age: user.age,
-            role: "admin"
-        }
-       return res.send({status:'succes',payload:req.session.user})
-    }
-    req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age,
-        role: user.role
-    }
-    res.send({status:'succes',payload:req.session.user})
 })
 
-router.post("/register", async(req,res) =>{
-    const {email,password,last_name,first_name,age} = req.body;
+router.get('/githubCallback',passport.authenticate('github',{failureRedirect:'/login'}),async(req,res)=>{
+    req.session.user = req.user;
+    res.redirect('/products')
+})
 
-    const exist = await userModel.findOne({email});
+router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogin'}) , async(req,res) =>{
+   if(!req.user)return res.status(400).send({status:'error',error:'invalid credentials'});
 
-    if(exist){
-        return res.status(400).send({status:'error',error:'email alredy used'})
+   if((req.user.email === "adminCoder@coder.com")){
+    req.session.user = {
+        first_name : req.user.first_name,
+        last_name: req.user.last_name,
+        age: req.user.age,
+        email: req.user.email,
+        role: "admin"
     }
-
-    const user = {
-        first_name,
-        last_name,
-        email,
-        age,
-        password,
-        role: "user"
+   return res.send({status:'succes',payload:req.session.user})
     }
+   
+   req.session.user = {
+    first_name : req.user.first_name,
+    last_name: req.user.last_name,
+    age: req.user.age,
+    email: req.user.email,
+    role: req.user.role
+   }
+   res.status(200).send({status:'success',payload:req.session.user})  
+})
 
-    let added = await userModel.create(user);
+router.get('/faillogin',(req,res) =>{
+    res.send({error:'failed login'})
+})
 
-    res.status(200).send({status:'succes',message:'User registered'}) //NO ENVIO EL USER PORQUE MANDARIA LA CONTRASEÑA(DATO SENSIBLE)
+router.post("/register", passport.authenticate('register',{failureRedirect:'/failregister'}) ,async(req,res) =>{
+    res.send({status:'success',message:'User register'})
+})
+
+router.get('/failregister',(req,res) =>{
+    console.log('Failed strategy');
+    res.status(400).send({error:'Failed'});
 })
 
 router.delete('/logOut', async(req,res) =>{

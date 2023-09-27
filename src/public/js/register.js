@@ -12,7 +12,7 @@ form.addEventListener('submit', e =>{
             'Content-Type':'application/json'
         }
     }).then(res => {
-        if(res.status === 400){
+        if(res.status === 404){
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
