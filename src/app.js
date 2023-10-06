@@ -32,7 +32,7 @@ app.use(session({
     },
     ttl:1000
   }),
-  secret:"asd123",
+  secret:"SecretCookie",
   resave:false,
   saveUninitialized:false
 }))

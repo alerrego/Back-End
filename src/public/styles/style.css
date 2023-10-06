@@ -1,0 +1,41 @@
+.Log-In{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+
+}
+
+.Log-In .formulario {
+    border: black 2px solid;
+    padding: 10px;
+    background-color: rgb(190, 183, 183);
+}
+
+.formulario a{
+    text-decoration: none;
+    color: rgb(22, 1, 162);
+}
+
+.register{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+
+}
+
+.register .register-form {
+    border: black 2px solid;
+    padding: 10px;
+    background-color: rgb(190, 183, 183);
+}
+
+.register-form a{
+    text-decoration: none;
+    color: rgb(22, 1, 162);
+}

@@ -7,14 +7,14 @@ const router = Router();
 const ManejadorDeCarritos = new CartManager()
 
 const publicAcces = (req,res,next) => {
-    if(req.session.user){
+    if(req.user){
         return res.redirect('/')
     }
     next();
 }
 
 const privateAcces = (req,res,next) => {
-    if(!req.session.user){
+    if(!req.user){
         return res.redirect('/login')
     }
     next();
@@ -27,7 +27,15 @@ router.get('/products',privateAcces,async(req,res) =>{
 
     const {docs,prevPage,nextPage,prevLink,nextLink,hasPrevPage,hasNextPage} = await productModel.paginate({},{limit:10,page:page,lean:true})
 
-    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user:req.session.user})
+    let user = {
+        first_name : req.user.first_name,
+        last_name : req.user.last_name,
+        age: req.user.age,
+        email: req.user.email,
+        role: req.user.role
+    }
+
+    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user})
 
 })
 

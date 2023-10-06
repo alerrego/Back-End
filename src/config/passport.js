@@ -2,11 +2,33 @@ import passport from "passport";
 import local from 'passport-local';
 import { userModel } from "../dao/mongo/models/user.js";
 import { createHash , isValidPassword } from "../utils.js";
-import GitHubStrategy from 'passport-github2'
+
+import GitHubStrategy from 'passport-github2';
+
+import CartManager from "../dao/mongo/classes/CartManager.js";
+const ManejadorDeCarritos = new CartManager();
+
+import jwt, { ExtractJwt } from "passport-jwt";
+const JWTStrategy = jwt.Strategy;
+const extractJWT = jwt.ExtractJwt;
 
 const LocalStrategy = local.Strategy;
 
 const initializePassport = () =>{
+
+    //JWT STRATEGY
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: extractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: 'secretKey',
+    },async(jwt_payload,done) =>{
+        try{
+            return done(null,jwt_payload)
+        }catch(err){
+            return done(err)
+        }
+    }))
+
+    //GITHUB STRATEGY
     passport.use('github',new GitHubStrategy({
         clientID:'Iv1.a74839f5fa714606',
         clientSecret:'6ca3bc375552564da9a7353006b71d49f7550106',
@@ -29,6 +51,8 @@ const initializePassport = () =>{
             done(err)
         }
     }))
+
+    //LOCAL STRATEGYS
     passport.use('register', new LocalStrategy({
         passReqToCallback : true,
         usernameField: 'email'
@@ -45,8 +69,8 @@ const initializePassport = () =>{
                 last_name,
                 email,
                 age,
-                password : createHash(password),
-                role: "user"
+                password : createHash(password),//LE HASHEO EL PASSWORD 
+                cartID: await ManejadorDeCarritos.getNewCart()//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
             }
             let res = await userModel.create(newUser);
             return done(null,res)
@@ -57,7 +81,7 @@ const initializePassport = () =>{
 
     passport.use('login',new LocalStrategy({usernameField:'email'},async(email,password,done)=>{
         try{
-            const user = await userModel.findOne({email : email});
+            const user = await userModel.findOne({email : email}).lean();
             if(!user){
                 console.log('User doesn´t exist');
                 return done(null,false)
@@ -78,6 +102,14 @@ const initializePassport = () =>{
         let user = await userModel.findById(id);
         done(null,user)
     })
+}
+
+const cookieExtractor = req =>{
+    let token = null;
+    if(req && req.cookies){
+        token = req.cookies['tokenCookie']
+    }
+    return token
 }
 
 export default initializePassport;

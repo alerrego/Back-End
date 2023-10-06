@@ -1,6 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
 
+import { generateToken ,authToken } from '../../../utils.js'
+
 const router = Router();
 
 router.post('/github', passport.authenticate('github',{scope:['user:email']}),async(req,res)=>{
@@ -8,32 +10,19 @@ router.post('/github', passport.authenticate('github',{scope:['user:email']}),as
 })
 
 router.get('/githubCallback',passport.authenticate('github',{failureRedirect:'/login'}),async(req,res)=>{
-    req.session.user = req.user;
     res.redirect('/products')
 })
 
 router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogin'}) , async(req,res) =>{
-   if(!req.user)return res.status(400).send({status:'error',error:'invalid credentials'});
+    if(!req.user)return res.status(400).send({status:'error',error:'invalid credentials'});
 
-   if((req.user.email === "adminCoder@coder.com")){
-    req.session.user = {
-        first_name : req.user.first_name,
-        last_name: req.user.last_name,
-        age: req.user.age,
-        email: req.user.email,
-        role: "admin"
-    }
-   return res.send({status:'succes',payload:req.session.user})
-    }
-   
-   req.session.user = {
-    first_name : req.user.first_name,
-    last_name: req.user.last_name,
-    age: req.user.age,
-    email: req.user.email,
-    role: req.user.role
-   }
-   res.status(200).send({status:'success',payload:req.session.user})  
+    if((req.user.email === "adminCoder@coder.com")){
+     const token = generateToken(req.user);
+     return res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
+     }
+    
+    const token = generateToken(req.user);
+    res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
 })
 
 router.get('/faillogin',(req,res) =>{
@@ -50,6 +39,8 @@ router.get('/failregister',(req,res) =>{
 })
 
 router.delete('/logOut', async(req,res) =>{
+    req.user = null;
+    res.clearCookie('tokenCookie');//ELIMINO EL TOKEN
     req.session.destroy(err => {
         if(!err){
             res.send('You are deslogued')
@@ -57,6 +48,10 @@ router.delete('/logOut', async(req,res) =>{
             res.send({status:'LogOut err',body:err})
         }
     })
+})
+
+router.get('/current',passport.authenticate('jwt',{session:false}),async(req,res) =>{
+    res.send(req.user)
 })
 
 export default router
