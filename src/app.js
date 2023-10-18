@@ -5,20 +5,22 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 
 
-import productRouter from '../src/dao/mongo/routes/products.js'
-import cartRouter from '../src/dao/mongo/routes/carts.js'
-import viewsRouter from '../src/dao/mongo/routes/views.js'
-import sessionRouter from '../src/dao/mongo/routes/sessions.js'
+import productRouter from './routes/products.js'
+import cartRouter from './routes/carts.js'
+import viewsRouter from './routes/views.js'
+import sessionRouter from './routes/sessions.js'
 
 import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
 
 import { Server } from 'socket.io';
-import ProductManager from '../src/dao/mongo/classes/ProductManager.js'
-import MessageManager from '../src/dao/mongo/classes/MessageManager.js'
+import MessageManager from '../src/dao/mongo/controllers/MessageManager.js'
 
 import passport from 'passport';
 import initializePassport from './config/passport.js';
+
+import config from './config/config.js';
+
 
 const app = express()
 
@@ -26,7 +28,7 @@ const app = express()
 app.use(cookieParser());
 app.use(session({
   store: MongoStore.create({
-    mongoUrl: "mongodb+srv://Rego:123@cluster0.h8wbe8w.mongodb.net/ecommerce",
+    mongoUrl: config.mongoUrl,
     mongoOptions: {
       useNewUrlParser:true,
     },
@@ -58,14 +60,13 @@ app.use('/api/carts', cartRouter);
 app.use('/', viewsRouter)
 app.use('/api/sessions',sessionRouter)
 
-const server = app.listen(8080, () =>{
-    console.log('En linea desde el puerto 8080')
+const server = app.listen(config.port, () =>{
+    console.log('En linea desde el puerto '+config.port)
 })
 
 
 //MONGOOSE
-mongoose.connect('mongodb+srv://Rego:123@cluster0.h8wbe8w.mongodb.net/ecommerce')
-const ControladorDeProductos = new ProductManager()
+mongoose.connect(config.mongoUrl)
 const ControladorDeMensajes = new MessageManager()
 
 const io = new Server(server);

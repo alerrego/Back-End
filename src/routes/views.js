@@ -1,10 +1,9 @@
 import { Router } from "express";
-import {productModel} from "../models/product.js";
-import CartManager from "../classes/CartManager.js";
+import {productModel} from "../dao/mongo/models/product.js";
+import { getCart } from "../dao/mongo/controllers/CartManager.js";
 
 const router = Router();
 
-const ManejadorDeCarritos = new CartManager()
 
 const publicAcces = (req,res,next) => {
     if(req.user){
@@ -40,8 +39,7 @@ router.get('/products',privateAcces,async(req,res) =>{
 })
 
 router.get('/cart/:cID',privateAcces,async(req,res) =>{
-    const cID = req.params.cID;
-    const cart = await ManejadorDeCarritos.getCart(cID);
+    const cart = await getCart();
     res.render('cart',{cart})
 })
 

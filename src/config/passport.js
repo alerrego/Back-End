@@ -1,14 +1,12 @@
 import passport from "passport";
 import local from 'passport-local';
 import { userModel } from "../dao/mongo/models/user.js";
+import { cartModel } from "../dao/mongo/models/cart.js";
 import { createHash , isValidPassword } from "../utils.js";
 
 import GitHubStrategy from 'passport-github2';
 
-import CartManager from "../dao/mongo/classes/CartManager.js";
-const ManejadorDeCarritos = new CartManager();
-
-import jwt, { ExtractJwt } from "passport-jwt";
+import jwt from "passport-jwt";
 const JWTStrategy = jwt.Strategy;
 const extractJWT = jwt.ExtractJwt;
 
@@ -64,13 +62,15 @@ const initializePassport = () =>{
                 console.log('Email alredy used');
                 return done(null,false)
             }
+            const newCart = new cartModel();
+            let cart = await cartModel.create(newCart);
             const newUser = {
                 first_name,
                 last_name,
                 email,
                 age,
                 password : createHash(password),//LE HASHEO EL PASSWORD 
-                cartID: await ManejadorDeCarritos.getNewCart()//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
+                cartID: cart._id//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
             }
             let res = await userModel.create(newUser);
             return done(null,res)
