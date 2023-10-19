@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import config from "../config/config.js";
 
 import { generateToken ,authToken } from '../utils.js'
 
@@ -16,11 +17,11 @@ router.get('/githubCallback',passport.authenticate('github',{failureRedirect:'/l
 router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogin'}) , async(req,res) =>{
     if(!req.user)return res.status(400).send({status:'error',error:'invalid credentials'});
 
-    if((req.user.email === "adminCoder@coder.com")){
+    if((req.user.email === config.adminName)){
+     req.user.role = "admin"
      const token = generateToken(req.user);
      return res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
      }
-    
     const token = generateToken(req.user);
     res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
 })

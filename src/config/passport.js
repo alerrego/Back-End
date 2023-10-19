@@ -1,7 +1,9 @@
 import passport from "passport";
 import local from 'passport-local';
-import { userModel } from "../dao/mongo/models/user.js";
-import { cartModel } from "../dao/mongo/models/cart.js";
+
+import { userModel } from "../models/user.js";
+import {cartService} from "../controllers/index.js"
+
 import { createHash , isValidPassword } from "../utils.js";
 
 import GitHubStrategy from 'passport-github2';
@@ -62,15 +64,13 @@ const initializePassport = () =>{
                 console.log('Email alredy used');
                 return done(null,false)
             }
-            const newCart = new cartModel();
-            let cart = await cartModel.create(newCart);
             const newUser = {
                 first_name,
                 last_name,
                 email,
                 age,
                 password : createHash(password),//LE HASHEO EL PASSWORD 
-                cartID: cart._id//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
+                cartID: await cartService.getNewCart()//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
             }
             let res = await userModel.create(newUser);
             return done(null,res)

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import {productModel} from "../dao/mongo/models/product.js";
-import { getCart } from "../dao/mongo/controllers/CartManager.js";
+import {productModel} from "../models/product.js";
+import config from "../config/config.js";
 
 const router = Router();
 
@@ -23,15 +23,17 @@ const privateAcces = (req,res,next) => {
 router.get('/products',privateAcces,async(req,res) =>{
 
     const page = req.query.page ?? 1;
+    let role = "user"
 
     const {docs,prevPage,nextPage,prevLink,nextLink,hasPrevPage,hasNextPage} = await productModel.paginate({},{limit:10,page:page,lean:true})
 
+    if(req.user.email == config.adminName) role = "admin"
     let user = {
         first_name : req.user.first_name,
         last_name : req.user.last_name,
         age: req.user.age,
         email: req.user.email,
-        role: req.user.role
+        role: role
     }
 
     res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user})

@@ -14,7 +14,7 @@ import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
 
 import { Server } from 'socket.io';
-import MessageManager from '../src/dao/mongo/controllers/MessageManager.js'
+import MessageManager from '../src/dao/mongo/managers/MessageManager.js'
 
 import passport from 'passport';
 import initializePassport from './config/passport.js';
