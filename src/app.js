@@ -19,7 +19,10 @@ import MessageManager from '../src/dao/mongo/managers/MessageManager.js'
 import passport from 'passport';
 import initializePassport from './config/passport.js';
 
+import cors from "cors"
+
 import config from './config/config.js';
+import {ManejadorDeProductos} from "./dao/mongo/managers/index.js"
 
 
 const app = express()
@@ -38,6 +41,9 @@ app.use(session({
   resave:false,
   saveUninitialized:false
 }))
+
+//CORS
+app.use(cors())
 
 //PASSPORT
 initializePassport();
@@ -71,33 +77,33 @@ const ControladorDeMensajes = new MessageManager()
 
 const io = new Server(server);
 
+let messages = [];
 
 io.on('connection', async(socket) =>{
     console.log('a user connected')
-    const products = await ControladorDeProductos.getProducts()
+    const products = await ManejadorDeProductos.getProducts()
     socket.emit('productos', products);
 
     //REAL TIME PRODUCTS
     socket.on('addProduct', async data => {
-        await ControladorDeProductos.addProduct(data)
-        const updatedProducts = await ControladorDeProductos.getProducts() // Obtener la lista actualizada de productos
+        await ManejadorDeProductos.addProduct(data)
+        const updatedProducts = await ManejadorDeProductos.getProducts() // Obtener la lista actualizada de productos
     socket.emit('update', updatedProducts);
       });
 
       socket.on("deleteProduct", async (id) => {
-        await ControladorDeProductos.deleteProduct(id)
+        await ManejadorDeProductos.deleteProduct(id)
         //obtengo todos los productos nuevamente
-        const products = await ControladorDeProductos.getProducts();
+        const products = await ManejadorDeProductos.getProducts()
         socket.emit("realTimeProducts", products);
       });
       //CHAT
-      socket.on("newChatUser", (data) => {
-        socket.broadcast.emit("newChatUser", data + " has joined the chat");
-      });
-    
-      socket.on("newMessage", async (data) => {
-        await ControladorDeMensajes.createMessage(data);
-        const messages = await ControladorDeMensajes.getMessages();
-        io.emit("messages", messages);
-      });
-}) 
+      socket.on('message', data => {
+        messages.push(data);
+        io.emit('messageLogs', messages);
+    })
+
+    socket.on('authenticated', data=> {
+        socket.broadcast.emit('newUserConnected', data);
+    })
+})

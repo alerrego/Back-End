@@ -95,6 +95,17 @@ const initializePassport = () =>{
         }
     }))
 
+    passport.use('current',new LocalStrategy({},async(req,done) =>{
+        try{
+            const role = req.user.user.role
+            console.log(role)
+            if(!role) return done(null,false)
+            return done(null,role)
+        }catch(err){
+            return done(err)
+        }
+    }))
+
     passport.serializeUser((user,done) =>{
         done(null,user._id)
     })

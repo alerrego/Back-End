@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {productModel} from "../models/product.js";
 import config from "../config/config.js";
+import { currentUser, currentAdmin } from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -50,7 +51,7 @@ router.get('/realTimeProducts',privateAcces,async(req, res) => {
 })
 
 
-router.get("/chat",publicAcces,(req, res) => {
+router.get("/chat",currentUser,(req, res) => {
     res.render("chat");
   })
 

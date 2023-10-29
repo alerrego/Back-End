@@ -25,3 +25,23 @@ export const generateToken = (user) =>{
 export const authToken = (req,res,next) =>{
     
 }
+
+//AUTOGENERADOR ID PARA CODIGO DE TICKET
+export const IDgenerator = () =>{
+    let a = Date.now().toString(30)
+    let b = Math.random().toString(30).substring(2)
+    return (a+b)
+}
+
+//mails
+import nodemailer from "nodemailer"
+import config from "../src/config/config.js"
+
+export const transport = nodemailer.createTransport({
+    service : "gmail",
+    port: 587,
+    auth: {
+        user: config.mails_correo,
+        pass: config.mails_password
+    }
+})

@@ -2,7 +2,11 @@ import { Router } from "express";
 import passport from "passport";
 import config from "../config/config.js";
 
+import UserDTO from "../dao/DTOs/user.js";
+
 import { generateToken ,authToken } from '../utils.js'
+
+import { currentAdmin,currentUser } from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -44,7 +48,7 @@ router.delete('/logOut', async(req,res) =>{
     res.clearCookie('tokenCookie');//ELIMINO EL TOKEN
     req.session.destroy(err => {
         if(!err){
-            res.send('You are deslogued')
+            res.send({status:"success",message:"you are deslogued"})
         }else{
             res.send({status:'LogOut err',body:err})
         }
@@ -52,7 +56,10 @@ router.delete('/logOut', async(req,res) =>{
 })
 
 router.get('/current',passport.authenticate('jwt',{session:false}),async(req,res) =>{
-    res.send(req.user)
+    const result = new UserDTO(req.user.user)
+    req.user = result
+    res.send(result)
 })
+
 
 export default router

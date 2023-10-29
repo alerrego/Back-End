@@ -1,54 +1,46 @@
 const socket = io();
-const chatBox = document.getElementById("chatBox");
-const btnSend = document.getElementById("btnSendMessage");
-//const messageLogs = document.getElementById("messageLogs");
-let user = "";
+let user;
+let chatBox = document.getElementById('chatBox');
 
 Swal.fire({
-  title: "Welcome to Chat!",
-  text: "Please enter your name:",
-  input: "text",
-  inputValidator: (value) => {
-    return !value && "Error! You need to write something!";
-  },
-}).then((data) => {
-  user = data.value;
-  socket.emit("newChatUser", user);
-});
+    title: "Identificate",
+    input: "text",
+    text: "Ingresa el usuario para identificarte",
+    inputValidator: (value) => {
+        return !value && 'Necesitas escribir un nombre de usuario'
+    },
+    allowOutsideClick: false,
+}).then(result => {
+    user = result.value
+    socket.emit('authenticated', user);
+})
 
-sendMessageToSocket = () => {
-  if (chatBox.value.trim().length > 0) {
-    socket.emit("newMessage", { user: user, message: chatBox.value.trim() });
-    chatBox.value = "";
-  }
-};
+chatBox.addEventListener('keyup', evt => {
+    if (evt.key === "Enter") {
+        if (chatBox.value.trim().length > 0) {
+            socket.emit('message', { user: user, message: chatBox.value })
+            chatBox.value = "";
+        }
+    }
+})
 
-chatBox.addEventListener("keyup", (e) => {
-  e.key === "Enter" && sendMessageToSocket();
-});
-
-btnSend.addEventListener("click", () => {
-  sendMessageToSocket();
-});
-
-//eventos socket escuchados
-socket.on("newChatUser", (data) => {
-  Swal.fire({
-    position: "top-end",
-    title: data,
-    showConfirmButton: false,
-    timer: 1000,
-  });
-});
-
-socket.on("messages", (data) => {
-  let html = ``;
-
-  data.forEach((item) => {
-    html += `<div class="row mb-3">
-        <div class="col-md-11"><b>${item.user}:</b><span class="fw-light"> ${item.message}</span></div>
-        </div>`;
-  });
-
-  messageLogs.innerHTML = html;
-});
+socket.on('messageLogs', data => {
+    if (!user) return;
+    let log = document.getElementById('messageLogs');
+    let messages = "";
+    data.forEach(message => {
+        messages = messages + `${message.user} dice: ${message.message} </br>`
+    })
+    log.innerHTML = messages;
+})
+socket.on('newUserConnected', user=>{
+    if (!user) return
+    Swal.fire({
+        toast: true,
+        position: "top-right",
+        text: "Nuevo usuario conectado",
+        title: `${user} se ha unido al chat`,
+        timer: 3000,
+        showConfirmButton: false
+    })
+})
