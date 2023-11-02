@@ -71,10 +71,10 @@ export default class ProductController {
     deleteProduct = async (req, res) => {
         try{
             const pID = req.params.pID
-            await ManejadorDeProductos.deleteProduct(pID)
-            res.status.send({status:'success',message:`the product of ID ${pID} are delete`})
-        }catch(error){
-            res.status(500).send({status:"error"})
+            const deleted = await ManejadorDeProductos.deleteProduct(pID)
+            return res.send({status:'success',message:`the product of ID ${pID} are delete`})
+        }catch(err){
+            return err
         }
     }
 }

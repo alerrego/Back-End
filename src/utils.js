@@ -14,11 +14,10 @@ export const createHash = (password) => bcrypt.hashSync(password,bcrypt.genSaltS
 export const isValidPassword = (user,password) => bcrypt.compareSync(password,user.password);
 
 import jwt from "jsonwebtoken";
-
-const PRIVATE_KEY = "secretKey";
+import config from './config/config.js';
 
 export const generateToken = (user) =>{
-    const token = jwt.sign({user},PRIVATE_KEY,{expiresIn:"1h"});
+    const token = jwt.sign({user},config.privateKeyJWT,{expiresIn:"1h"});
     return token;
 }
 
@@ -35,7 +34,6 @@ export const IDgenerator = () =>{
 
 //mails
 import nodemailer from "nodemailer"
-import config from "../src/config/config.js"
 
 export const transport = nodemailer.createTransport({
     service : "gmail",

@@ -15,7 +15,9 @@ router.post('/github', passport.authenticate('github',{scope:['user:email']}),as
 })
 
 router.get('/githubCallback',passport.authenticate('github',{failureRedirect:'/login'}),async(req,res)=>{
-    res.redirect('/products')
+       const token = generateToken(req.user);
+       res.cookie('tokenCookie',token,{httpOnly:true})
+       res.redirect('/products')
 })
 
 router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogin'}) , async(req,res) =>{
@@ -24,10 +26,12 @@ router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogi
     if((req.user.email === config.adminName)){
      req.user.role = "admin"
      const token = generateToken(req.user);
-     return res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
+     res.cookie('tokenCookie',token,{httpOnly:true})
+     return res.send({status:'success',token:token,expires:"in 1 hour"})
      }
     const token = generateToken(req.user);
-    res.cookie('tokenCookie',token,{httpOnly:true}).status(200).send({status:'success'});
+    res.cookie('tokenCookie',token,{httpOnly:true})
+    res.send({status:'success',token:token,expires:"in 1 hour",cartID:req.user.cartID})
 })
 
 router.get('/faillogin',(req,res) =>{
@@ -35,7 +39,7 @@ router.get('/faillogin',(req,res) =>{
 })
 
 router.post("/register", passport.authenticate('register',{failureRedirect:'/failregister'}) ,async(req,res) =>{
-    res.send({status:'success',message:'User register'})
+    res.status(200).send({status:'success',message:'User register'})
 })
 
 router.get('/failregister',(req,res) =>{

@@ -54,9 +54,10 @@ export default class ProductManager{
         }
     }
     deleteProduct = async (pID) => {
-        try {
-            await productModel.deleteOne({ _id: pID }) //LE PASO EL ID A BORRAR
-        } catch (error) {
+        try{
+            const deleted = await productModel.deleteOne({ _id: pID }) //LE PASO EL ID A BORRAR
+            return deleted
+        }catch(error){
             return error
         }
     }

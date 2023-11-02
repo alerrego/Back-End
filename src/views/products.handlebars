@@ -1,26 +1,36 @@
-<div>
-    <div>
-        <h2>Welcome {{user.last_name}}</h2>
+<div class="products-page">
+    <div class="user-information">
+        <p>Welcome: {{user.last_name}}</h2>
         <p>Email: {{user.email}}</p>
         <p>Age: {{user.age}}</p>
         <p>Role: {{user.role}}</p>
         <br>
-        <a href="/login" id="logOut">Log Out</a>
+        <div class="buttons-redirection-products">
+            <a href="/login" id="logOut">Log Out</a>
+            <a href="/cart/{{user.cartID}}">Cart</a>
+        </div>
     </div>
+    <p class="product-list">Products list: </p>
     <br>
-    {{#each this.docs}}
-    <div>
-        <h2>{{this.title}}</h2>
-        <p>Descripcion: {{this.description}}</p>
-        <p>Codigo: {{this.code}}</p>
-        <p>Precio: {{this.price}}</p>
-        <p>Stock: {{this.stock}}</p>
-        <p>Categoria: {{this.category}}</p>
-        <p>Imagenes: {{this.thumbnails}}</p>
-        <p>ID: {{this._id}}</p>
-        <a><button>Add to cart</button></a>
+    <div class="products">
+        {{#each this.docs}}
+    <div class="card">
+        <div class="card-images">
+            <img src={{this.thumbnails}} alt="image of product">
+        </div>
+        <div class="card-text">
+            <h3>{{this.title}}</h3>
+            <p>Descripcion: {{this.description}}</p>
+            <p>Codigo: {{this.code}}</p>
+            <p>Precio: {{this.price}}</p>
+            <p>Stock: {{this.stock}}</p>
+            <p>Categoria: {{this.category}}</p>
+            <p>ID: {{this._id}}</p>
+            <a href="/cart/{{../user.cartID}}/product/{{this._id}}">Add to cart</a>
+        </div>
     </div>                                            
     {{/each}}
+    </div>
     <br>
     <div>
         {{#if hasPrevPage}}

@@ -2,7 +2,7 @@ import passport from "passport";
 import local from 'passport-local';
 
 import { userModel } from "../models/user.js";
-import {cartService} from "../controllers/index.js"
+import {ManejadorDeCarritos} from "../dao/mongo/managers/index.js"
 
 import { createHash , isValidPassword } from "../utils.js";
 
@@ -35,8 +35,7 @@ const initializePassport = () =>{
         callbackURL:'http://localhost:8080/api/sessions/githubCallback'
     },async(accesToken,refreshToken,profile,done)=>{
         try{
-            console.log(profile);
-            let user = await userModel.findOne({email:profile._json.email});
+            let userProfile = await userModel.findOne({email:profile._json.email});
             let newUser = {
                 first_name : profile.displayName,
                 last_name: '',
@@ -45,8 +44,8 @@ const initializePassport = () =>{
                 password : '',
                 role:'user'
             }
-            let res = await userModel.create(newUser);
-            done(null,res)
+            let user = await userModel.create(newUser);
+            done(null,user)
         }catch(err){
             done(err)
         }
@@ -57,23 +56,27 @@ const initializePassport = () =>{
         passReqToCallback : true,
         usernameField: 'email'
     },async(req,username,password,done)=>{
-        const {first_name,last_name,email,age} = req.body;
+        const {first_name,last_name,email,age,phone} = req.body;
         try{
             let user = await userModel.findOne({email:username});
             if(user){
                 console.log('Email alredy used');
                 return done(null,false)
             }
-            const newUser = {
+
+            let newUser = {
                 first_name,
                 last_name,
                 email,
                 age,
-                password : createHash(password),//LE HASHEO EL PASSWORD 
-                cartID: await cartService.getNewCart()//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
+                phone,
+                active:true,
+                role: "user",
+                password : createHash(password),//LE HASHEO EL PASSWORD,
+                cartID: await ManejadorDeCarritos.getNewCart()//LE CREO Y ASIGNO UN CART PROPIO AL USUARIO
             }
-            let res = await userModel.create(newUser);
-            return done(null,res)
+            let result = await userModel.create(newUser);
+            return done(null,result)
         }catch(err){
             return done('Error getting user: '+err);
         }

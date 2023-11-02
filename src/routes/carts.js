@@ -4,7 +4,7 @@ import { currentAdmin , currentUser } from "../middlewares/auth.js";
 
 const router = Router();
 
-router.get('/', cartService.getCarts)
+router.get('/',currentAdmin, cartService.getCarts)//LO DEJO SOLO VER AL ADMIN ASI NO HAY CARGAS MAL INTENCIONADAS
 
 router.get('/:cID', cartService.getCart)
 
