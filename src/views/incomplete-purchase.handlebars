@@ -1,0 +1,13 @@
+<div class="container-incomplete-purchase">
+    <div class="incomplete-content">
+    <h2>Your purchase was made incomplete: </h2>
+    <p>only products with available stock could be purchased</p>
+    <p>Products out of stock: </p>
+    <div>
+        {{#each ticketData}}
+            <p>{{this}}</p>                         
+        {{/each}}
+    </div>
+</div>
+    <a href="/products" class="return-to">Return to products</a>
+</div>

@@ -16,9 +16,11 @@
             <p>ID: {{this._id}}</p>
             <p>Quantity: {{this.quantity}}</p>
         </div>
+        <a href="/delete/cart/{{../cID}}/product/{{this.productID._id}}">Delete product</a>
     </div>                                            
     {{/each}}
 </div>
 <div class="return-products">
     <a href="/products">Return to products</a>
+    <a href="/purchase/{{cID}}">Purchase</a>
 </div>

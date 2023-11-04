@@ -58,6 +58,33 @@ router.get('/cart/:cID/product/:pID',async(req,res) =>{
     res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user,cID})
 })
 
+router.get('/purchase/:cID',async(req,res) =>{
+    const cID = req.params.cID;
+    const ticketData = await ManejadorDeCarritos.purchase(cID)
+    if(ticketData == -1){
+        return res.render('cart-empty')
+    }
+    if(Array.isArray(ticketData)){
+        return res.render('incomplete-purchase',{ticketData})   
+    }
+    const code = ticketData.code
+    const date = ticketData.purchase_datatime
+    const amount = ticketData.amount
+    const purchaser = ticketData.purchaser
+    res.render('complete-purchase',{code,date,amount,purchaser})
+})
+
+router.get('/delete/cart/:cID/product/:pID',async(req,res) =>{
+    const cID = req.params.cID
+    const pID = req.params.pID
+    const result = await ManejadorDeCarritos.deleteProduct(cID,pID)
+
+    const cartToView = await ManejadorDeCarritos.getCart(cID)
+    const products = cartToView.products
+    
+    res.render('cart',{products,cID})
+})
+
 router.get('/realTimeProducts',current,async(req, res) => {
     res.render('realTimeProducts')
 })
