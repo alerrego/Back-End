@@ -43,3 +43,26 @@ export const transport = nodemailer.createTransport({
         pass: config.mails_password
     }
 })
+
+//FAKER MOCKS
+
+import { faker } from '@faker-js/faker';
+
+export const generateProducts = () =>{
+    let numOfProducts =  100
+    let products = []
+    for (let index = 0; index < numOfProducts; index++) {
+        const product = {
+            title : faker.commerce.productName(),
+            description : faker.commerce.productDescription(),
+            code : IDgenerator(),
+            price: faker.commerce.price(),
+            stock: Math.floor(Math.random()*1000-100+100),
+            category:faker.commerce.productAdjective(),
+            _id: faker.database.mongodbObjectId(),
+            thumbnails:faker.image.url()
+        }
+        products.push(product)
+    }
+    return products
+}

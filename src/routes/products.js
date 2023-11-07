@@ -8,6 +8,8 @@ router.get('/',productService.getProducts)
 
 router.get('/:pID', productService.getProduct)
 
+router.get('/mock/mockingproducts', productService.getMockingProducts)
+
 router.post('/',currentAdmin,productService.addProduct)
 
 router.post('/many',currentAdmin,productService.addProducts)

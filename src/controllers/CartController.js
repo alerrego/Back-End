@@ -2,6 +2,11 @@ import { ManejadorDeCarritos } from "../dao/mongo/managers/index.js"
 import {transport} from "../utils.js"
 import config from "../config/config.js";
 
+//ERRORS
+import EnumerationErrors from "../services/errors/enum.js";
+import { addProductErrorInfo } from "../services/errors/info.js";
+import CustomError from "../services/errors/CustomError.js";
+
 export default class CartController{
     constructor(){
 
@@ -44,12 +49,16 @@ export default class CartController{
     
             const cart = await ManejadorDeCarritos.addProduct(cID,pID);
             if (cart === null) {
-                return res.status(404).send({ status: 'error', message: `The ID of cart ${cID} or ID of product ${pID} are incorrect` })
-            }
+                CustomError.createError({
+                    name: 'Invalid cartID or productID',
+                    cause: addProductErrorInfo(cID,pID),
+                    message: "Error trying to add product",
+                    code: EnumerationErrors.NOT_FOUND
+                }) }
             res.send({ status: 'success', payload: cart })
         }
         catch (error) {
-            res.status(500).send({ status: 'error' })
+            res.send({ status: 'error',error })
         }
     }
     

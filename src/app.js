@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import compression from 'express-compression'
 
 
 import productRouter from './routes/products.js'
@@ -20,6 +21,8 @@ import passport from 'passport';
 import initializePassport from './config/passport.js';
 
 import cors from "cors"
+
+import errorHandler from '../src/middlewares/error/index.js'
 
 import config from './config/config.js';
 import {ManejadorDeProductos} from "./dao/mongo/managers/index.js"
@@ -44,6 +47,12 @@ app.use(session({
 
 //CORS
 app.use(cors())
+
+//COMPRESSION
+app.use(compression())//SE PUEDE AGREGAR BROTLI TAMBIEN
+
+//ERRORS
+app.use(errorHandler)
 
 //PASSPORT
 initializePassport();
