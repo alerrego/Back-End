@@ -2,7 +2,7 @@ import { cartModel } from "../../../models/cart.js";
 import { userModel } from "../../../models/user.js"
 import { productModel } from "../../../models/product.js";
 import { ticketModel } from "../../../models/ticket.js";
-import { IDgenerator } from "../../../utils.js";
+import { IDgenerator } from "../../../utils/utils.js";
 
 export default class CartManager{
     constructor(){

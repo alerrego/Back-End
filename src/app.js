@@ -10,9 +10,10 @@ import productRouter from './routes/products.js'
 import cartRouter from './routes/carts.js'
 import viewsRouter from './routes/views.js'
 import sessionRouter from './routes/sessions.js'
+import loggerRouter from './routes/logger.js'
 
 import handlebars from 'express-handlebars';
-import __dirname from './utils.js';
+import __dirname from './utils/utils.js';
 
 import { Server } from 'socket.io';
 import MessageManager from '../src/dao/mongo/managers/MessageManager.js'
@@ -24,6 +25,8 @@ import cors from "cors"
 
 import config from './config/config.js';
 import {ManejadorDeProductos} from "./dao/mongo/managers/index.js"
+
+import { addLogger } from './utils/logger.js';
 
 
 const app = express()
@@ -45,6 +48,9 @@ app.use(session({
 
 //CORS
 app.use(cors())
+
+//LOGGER
+app.use(addLogger)
 
 //COMPRESSION
 app.use(compression())//SE PUEDE AGREGAR BROTLI TAMBIEN
@@ -69,6 +75,7 @@ app.use('/api/products' , productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/', viewsRouter)
 app.use('/api/sessions',sessionRouter)
+app.use('/',loggerRouter)
 
 const server = app.listen(config.port, () =>{
     console.log('En linea desde el puerto '+config.port)

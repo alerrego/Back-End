@@ -14,7 +14,7 @@ export const createHash = (password) => bcrypt.hashSync(password,bcrypt.genSaltS
 export const isValidPassword = (user,password) => bcrypt.compareSync(password,user.password);
 
 import jwt from "jsonwebtoken";
-import config from './config/config.js';
+import config from '../config/config.js';
 
 export const generateToken = (user) =>{
     const token = jwt.sign({user},config.privateKeyJWT,{expiresIn:"1h"});

@@ -4,7 +4,7 @@ import config from "../config/config.js";
 
 import UserDTO from "../dao/DTOs/user.js";
 
-import { generateToken ,authToken } from '../utils.js'
+import { generateToken ,authToken } from '../utils/utils.js'
 
 import { currentAdmin,currentUser } from "../middlewares/auth.js";
 

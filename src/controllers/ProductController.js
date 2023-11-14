@@ -1,6 +1,6 @@
 import { ManejadorDeProductos } from "../dao/mongo/managers/index.js"
 import ProductDTO from "../dao/DTOs/product.js";
-import { generateProducts } from "../utils.js"
+import { generateProducts } from "../utils/utils.js"
 
 //MANEJO ERRORES
 import EnumerationErrors from "../services/errors/enum.js";
@@ -18,6 +18,7 @@ export default class ProductController {
             const category = req.query.category ?? undefined;
             const products = await ManejadorDeProductos.getProducts(limit, page, sort, stock, category)
 
+            req.logger.info("You get the products")
             res.send({ status: 'success', payload: products })
         }
         catch (error) {
@@ -29,6 +30,7 @@ export default class ProductController {
         if (!products) {
             return res.status(500).send({ status: 'error' })
         }
+        req.logger.info("You get mocking products")
         res.send({ status: 'success', payload: products })
     }
     getProduct = async (req, res) => {
@@ -44,8 +46,10 @@ export default class ProductController {
                 })
             }
             const result = new ProductDTO(product)
+            req.logger.info("You get a product")
             res.send({ status: 'success', payload: result })
         } catch (error) {
+            req.logger.error(error)
             res.send({status:'error',error})
         }
     }
@@ -64,8 +68,10 @@ export default class ProductController {
             if (!newProduct) {
                 return res.send({ status: "error", message: "data incorrect" })
             }
+            req.logger.info("You created a product")
             res.send({ status: "success", payload: newProduct })
         } catch (error) {
+            req.logger.error(error)
             res.send({ status: "error", error:error })
         }
     }
@@ -84,8 +90,10 @@ export default class ProductController {
             if (!newProducts) {
                 return res.send({ status: "error", message: "data incorrect" })
             }
+            req.logger.info("You created products")
             res.send({ status: "success", payload: newProducts })
         } catch (error) {
+            req.logger.error(error)
             res.status(500).send({ status: "error",error:error })
         }
     }
@@ -94,9 +102,11 @@ export default class ProductController {
             const pID = req.params.pID
             const data = req.body
             const update = await ManejadorDeProductos.updateProduct(data, pID);
-            if (!update) {
-                return res.send({ status: 'error', message: 'data incorrect' })
+            if (update.modifiedCount == 0) {
+                req.logger.error("The ID is incorrect to update")
+                return res.send({ status: 'error', message: 'Incorrect ID' })
             }
+            req.logger.info("You update a product")
             res.send({ status: 'success', payload: update })
         } catch (error) {
             res.status(500).send({ status: 'error' })
@@ -114,8 +124,10 @@ export default class ProductController {
                     code: EnumerationErrors.NOT_FOUND
                 })
             }
+            req.logger.info("You deleted correctly")
             return res.send({ status: 'success', message: `the product of ID ${pID} are delete` })
         } catch (error) {
+            req.logger.error(error)
             res.status(500).send({ status: "error",error:error })
         }
     }

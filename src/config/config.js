@@ -21,6 +21,7 @@ export default {
     persistence: process.env.PERSISTENCE,
     mails_password : process.env.SEND_MAILS_PASSWORD,
     mails_correo: process.env.SEND_MAILS_CORREO,
-    privateKeyJWT : process.env.PRIVATE_KEY_JWT
+    privateKeyJWT : process.env.PRIVATE_KEY_JWT,
+    enviroment: process.env.ENVIROMENT
 }
 

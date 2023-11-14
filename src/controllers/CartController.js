@@ -1,5 +1,5 @@
 import { ManejadorDeCarritos } from "../dao/mongo/managers/index.js"
-import {transport} from "../utils.js"
+import {transport} from "../utils/utils.js"
 import config from "../config/config.js";
 
 //ERRORS
@@ -14,6 +14,7 @@ export default class CartController{
     getCarts = async(req,res) =>{
             try {
                 const carts = await ManejadorDeCarritos.getCarts();
+                req.logger.info("you obtained the carts satisfactorily")
                 res.send({ status: 'success', payload: carts })
             } catch (error) {
                 res.status(500).send({ status: 'error' })
@@ -26,6 +27,7 @@ export default class CartController{
             if (!cart) {
                 return res.status(404).send({ status: 'error', message: `cart of ID: ${cID} not found` })
             }
+            req.logger.info("you obtained the cart satisfactorily")
             res.send({ status: 'success', payload: cart })
         }
         catch (error) {
@@ -36,9 +38,11 @@ export default class CartController{
     getNewCart = async (req, res) => {
         try {
             const newCartID = await ManejadorDeCarritos.getNewCart();
+            req.logger.info("you created a new cart")
             res.send({ status: 'success', payload: newCartID })
         }
         catch (error) {
+            req.logger.error(error)
             res.status(500).send({ status: 'error' })
         }
     }
@@ -55,9 +59,11 @@ export default class CartController{
                     message: "Error trying to add product",
                     code: EnumerationErrors.NOT_FOUND
                 }) }
+            req.logger.info("You added a product to cart")
             res.send({ status: 'success', payload: cart })
         }
         catch (error) {
+            req.logger.error(error)
             res.send({ status: 'error',error })
         }
     }
@@ -68,6 +74,7 @@ export default class CartController{
             await ManejadorDeCarritos.deleteCart(cID)
             res.send({ status: 'succes', message: `the cart of ID ${cID} are deleted` })
         } catch (error) {
+            req.logger.error(error)
             res.status(500).send({ status: 'error' })
         }
     }
@@ -83,6 +90,7 @@ export default class CartController{
             res.send({status: 'success',message:`the product of ID ${pID} are deleted to cart of ID ${cID}`})
         }
         catch (error) {
+            req.logger.error(error)
             res.status(500).send({ status: 'error' })
         }
     }
@@ -103,6 +111,7 @@ export default class CartController{
                          </div>`,
                     attachments:[]
                 })
+                req.logger.info("your purchase was incomplete, but completed")
                 return res.send({status:'incomplete',message:"the ID´s of payload they do not have the necessary stock", payload:result})
             }
             let mailSuccess = await transport.sendMail({
@@ -114,8 +123,10 @@ export default class CartController{
                      </div>`,
                 attachments:[]  
             })
+            req.logger.info("your purchase was completed")
             res.send({status:'success',payload:result})
         }catch(error){
+            req.logger.error(error)
             res.status(500).send({status: 'error'})
         }
     }
