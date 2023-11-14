@@ -50,7 +50,7 @@ export default class CartController{
             const cart = await ManejadorDeCarritos.addProduct(cID,pID);
             if (cart === null) {
                 CustomError.createError({
-                    name: 'Invalid cartID or productID',
+                    name: 'INVALID cartID or productID',
                     cause: addProductErrorInfo(cID,pID),
                     message: "Error trying to add product",
                     code: EnumerationErrors.NOT_FOUND

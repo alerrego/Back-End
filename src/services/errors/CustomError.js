@@ -3,6 +3,7 @@ export default class CustomError{
         const error = new Error(message,{cause})
         error.name = name
         error.code = code
+        error.cause  = cause
         throw error
     }
 }

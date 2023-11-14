@@ -37,7 +37,7 @@ export default class ProductController {
             const product = await ManejadorDeProductos.getProduct(pID)
             if (!product) {
                 CustomError.createError({
-                    name: 'Search Error',
+                    name: 'ID NOT FOUND',
                     cause: getProductErrorInfo(pID),
                     message: 'error trying to search for the product',
                     code: EnumerationErrors.NOT_FOUND
@@ -54,7 +54,7 @@ export default class ProductController {
             const data = req.body
             if (!data.title || !data.code || !data.description || !data.stock || !data.price || !data.thumbnails || !data.category) {
                 CustomError.createError({
-                    name: 'Product creation Error',
+                    name: 'INVALID DATA ERROR',
                     cause: createProductErrorInfo(data),
                     message: "Error trying to create product",
                     code: EnumerationErrors.INVALID_TYPES_ERROR
@@ -64,21 +64,29 @@ export default class ProductController {
             if (!newProduct) {
                 return res.send({ status: "error", message: "data incorrect" })
             }
-            res.send({ status: "succes", payload: newProduct })
+            res.send({ status: "success", payload: newProduct })
         } catch (error) {
-            res.send({ status: "error" })
+            res.send({ status: "error", error:error })
         }
     }
     addProducts = async (req, res) => {
         try {
             const data = req.body
+            if (!data.title || !data.code || !data.description || !data.stock || !data.price || !data.thumbnails || !data.category) {
+                CustomError.createError({
+                    name: 'INVALID DATA ERROR',
+                    cause: createProductErrorInfo(data),
+                    message: "Error trying to create product",
+                    code: EnumerationErrors.INVALID_TYPES_ERROR
+                })
+            }
             const newProducts = await ManejadorDeProductos.addProducts(data)
             if (!newProducts) {
                 return res.send({ status: "error", message: "data incorrect" })
             }
-            res.send({ status: "succes", payload: newProducts })
+            res.send({ status: "success", payload: newProducts })
         } catch (error) {
-            res.status(500).send({ status: "error" })
+            res.status(500).send({ status: "error",error:error })
         }
     }
     updateProduct = async (req, res) => {
@@ -98,9 +106,17 @@ export default class ProductController {
         try {
             const pID = req.params.pID
             const deleted = await ManejadorDeProductos.deleteProduct(pID)
+            if (deleted.deletedCount == 0) {
+                CustomError.createError({
+                    name: 'ID NOT FOUND',
+                    cause: getProductErrorInfo(pID),
+                    message: 'error trying to search for the product',
+                    code: EnumerationErrors.NOT_FOUND
+                })
+            }
             return res.send({ status: 'success', message: `the product of ID ${pID} are delete` })
-        } catch (err) {
-            return err
+        } catch (error) {
+            res.status(500).send({ status: "error",error:error })
         }
     }
 }
