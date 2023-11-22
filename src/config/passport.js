@@ -4,7 +4,7 @@ import local from 'passport-local';
 import { userModel } from "../models/user.js";
 import {ManejadorDeCarritos} from "../dao/mongo/managers/index.js"
 
-import { createHash , isValidPassword } from "../utils/utils.js";
+import { createHash , isValidPassword } from "../utils.js";
 
 import GitHubStrategy from 'passport-github2';
 

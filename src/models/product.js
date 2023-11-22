@@ -23,6 +23,9 @@ const productSchema = new mongoose.Schema({
     thumbnails: {
         type:Array,
         default: []
+    },
+    owner: {
+        type: String
     }
 });
 

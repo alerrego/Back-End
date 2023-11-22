@@ -2,7 +2,8 @@ import { cartModel } from "../../../models/cart.js";
 import { userModel } from "../../../models/user.js"
 import { productModel } from "../../../models/product.js";
 import { ticketModel } from "../../../models/ticket.js";
-import { IDgenerator } from "../../../utils/utils.js";
+import { IDgenerator } from "../../../utils.js";
+import { ManejadorDeProductos } from "./index.js";
 
 export default class CartManager{
     constructor(){
@@ -33,6 +34,7 @@ export default class CartManager{
             const product = await productModel.findOne({_id : pID}); //TIENEN QUE SER CADENA DE 24 SINO ERROR
             const cart = await cartModel.findOne({ _id: cID })
             let isAdd = false
+
     
             if ((product === null) || (cart === null)) {
                 return null

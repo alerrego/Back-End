@@ -14,7 +14,7 @@ export const createHash = (password) => bcrypt.hashSync(password,bcrypt.genSaltS
 export const isValidPassword = (user,password) => bcrypt.compareSync(password,user.password);
 
 import jwt from "jsonwebtoken";
-import config from '../config/config.js';
+import config from './config/config.js';
 
 export const generateToken = (user) =>{
     const token = jwt.sign({user},config.privateKeyJWT,{expiresIn:"1h"});
@@ -65,4 +65,12 @@ export const generateProducts = () =>{
         products.push(product)
     }
     return products
+}
+
+import crypto from "crypto"
+
+export const generateTokenForgotPassword = () =>{
+    const tokenPassword = crypto.randomBytes(20).toString('hex')
+    const expirationTokenTime = Date.now() + 3600000;
+    return {tokenPassword,expirationTokenTime}
 }

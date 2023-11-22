@@ -1,8 +1,9 @@
 import { Router } from "express";
 import {productModel} from "../models/product.js";
+import { userModel } from "../models/user.js";
 import {ManejadorDeCarritos} from '../dao/mongo/managers/index.js'
 import config from "../config/config.js";
-import { currentUser, currentAdmin, current } from "../middlewares/auth.js";
+import { currentUser, current } from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -95,14 +96,29 @@ router.get("/chat",currentUser,(req, res) => {
   })
 
 router.get('/login',async(req,res) =>{
-    res.render('login')
+    res.render("login")
 })
 router.get('/',async(req,res) =>{
-    res.render('login')
+    res.render("login")
 })
 
 router.get('/register',async(req,res) =>{
     res.render("register")
 })
 
+router.get('/changePassword',async(req,res) =>{
+    res.render('changePassword')
+})
+
+router.get('/resetPassword',async(req,res) =>{
+    const tokenPassword = req.query.tokenPassword //LO RECIBO POR QUERY PARAMS 
+    const user = await userModel.findOne({tokenPassword : tokenPassword})
+    if(!user){
+        return res.status(404).render('changePassword')
+    }
+    if(Date.now() > user.expirationTokenTime){ //COMPARO LA HORA CON EL TOKEN ENVIADO
+        return res.status(404).render('changePassword')
+    }
+    res.render('resetPassword-form')
+})
 export default router;

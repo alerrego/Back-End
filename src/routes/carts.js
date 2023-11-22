@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { cartService } from "../controllers/index.js"
-import { currentAdmin , currentUser } from "../middlewares/auth.js";
+import { currentAdmin , currentUser,isPremiumOrAdmin } from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.post('/', cartService.getNewCart)
 
 router.post('/:cID/purchase',currentUser, cartService.purchase)
 
-router.put('/:cID/product/:pID',currentUser,cartService.addProduct)
+router.put('/:cID/product/:pID',isPremiumOrAdmin,cartService.addProduct)
 
 router.delete('/:cID',cartService.deleteCart)
 

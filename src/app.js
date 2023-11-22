@@ -11,9 +11,10 @@ import cartRouter from './routes/carts.js'
 import viewsRouter from './routes/views.js'
 import sessionRouter from './routes/sessions.js'
 import loggerRouter from './routes/logger.js'
+import usersRouter from './routes/users.js'
 
 import handlebars from 'express-handlebars';
-import __dirname from './utils/utils.js';
+import __dirname from './utils.js';
 
 import { Server } from 'socket.io';
 import MessageManager from '../src/dao/mongo/managers/MessageManager.js'
@@ -69,13 +70,13 @@ app.use(express.static(__dirname+'/public'));
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views');
 app.set('view engine', 'handlebars');
-
 //RUTAS
 app.use('/api/products' , productRouter);
 app.use('/api/carts', cartRouter);
-app.use('/', viewsRouter)
-app.use('/api/sessions',sessionRouter)
-app.use('/',loggerRouter)
+app.use('/', viewsRouter);
+app.use('/api/sessions',sessionRouter);
+app.use('/',loggerRouter);
+app.use('/api/users',usersRouter)
 
 const server = app.listen(config.port, () =>{
     console.log('En linea desde el puerto '+config.port)

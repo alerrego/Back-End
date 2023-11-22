@@ -3,10 +3,12 @@ import passport from "passport";
 import config from "../config/config.js";
 
 import UserDTO from "../dao/DTOs/user.js";
+import { userModel } from "../models/user.js";
 
-import { generateToken ,authToken } from '../utils/utils.js'
+import { generateToken , isValidPassword , createHash} from '../utils.js'
 
-import { currentAdmin,currentUser } from "../middlewares/auth.js";
+import {transport,generateTokenForgotPassword} from "../utils.js"
+
 
 const router = Router();
 
@@ -35,7 +37,7 @@ router.post("/login", passport.authenticate('login',{failureRedirect: '/faillogi
 })
 
 router.get('/faillogin',(req,res) =>{
-    res.send({error:'failed login'})
+    res.send({status:'error',message:'failed login'})
 })
 
 router.post("/register", passport.authenticate('register',{failureRedirect:'/failregister'}) ,async(req,res) =>{
@@ -65,5 +67,52 @@ router.get('/current',passport.authenticate('jwt',{session:false}),async(req,res
     res.send(result)
 })
 
+router.post('/sendMailForgotPassword',async(req,res) =>{
+    const emailToSend = req.body.email // RECIBO EL MAIL
+
+    const user = await userModel.findOne({email : emailToSend})
+
+    if(!user){
+        return res.status(404).send({status:'error',message:`The user of email ${emailToSend} doesn´t exist`})
+    }
+    const {tokenPassword,expirationTokenTime} = generateTokenForgotPassword() //GENERO LOS DATOS
+
+    user.tokenPassword = tokenPassword
+    user.expirationTokenTime = expirationTokenTime // LE AGREGO LOS DATOS DEL TOKEN AL USUARIO PARA TENERLO EN LA BD
+
+    await userModel.updateOne({email:emailToSend},user)
+
+    let mailSend = await transport.sendMail({
+        from: config.mails_correo,
+        to: emailToSend,
+        subject: "Change of password",
+        html:`<div>
+                <h3>Your recovery link is the following: </h3>
+                <a>http://${req.headers.host}/resetPassword?tokenPassword=${tokenPassword}</a>
+             </div>`,
+        attachments:[]
+    })
+    res.send({status:'success',message:`The recovery email was sent correctly to ${emailToSend}`})
+})
+
+router.post('/changePassword',async(req,res) =>{
+    const {newPassword,tokenPassword} = req.body
+    const user = await userModel.findOne({tokenPassword:tokenPassword})
+    
+    if(isValidPassword(user,newPassword)){
+        return res.send({status:'error',message:'Your password did not change'})//SI VALIDA PUSO LA MISMA CONTRASEÑA POR ENDE ERROR
+    }
+    const passwordHash = createHash(newPassword)
+
+    user.password = passwordHash //LE ASIGNO LA NUEVA CONTRASEÑA
+    
+    user.tokenPassword = null
+    user.expirationTokenTime = null 
+
+    await userModel.updateOne({_id : user._id},user) // LO ACTUALIZO EN LA BD
+
+    res.status(200).send({status:'success',message:'Your password was changed'})
+
+})
 
 export default router

@@ -1,6 +1,8 @@
 import { ManejadorDeProductos } from "../dao/mongo/managers/index.js"
 import ProductDTO from "../dao/DTOs/product.js";
-import { generateProducts } from "../utils/utils.js"
+import { generateProducts } from "../utils.js"
+
+import { userModel } from "../models/user.js";
 
 //MANEJO ERRORES
 import EnumerationErrors from "../services/errors/enum.js";
@@ -55,7 +57,15 @@ export default class ProductController {
     }
     addProduct = async (req, res) => {
         try {
-            const data = req.body
+            let data = req.body
+            let owner = "admin"
+            
+            if(req.user.role == "premium"){
+                owner = req.user.email
+            }
+
+            data.owner = owner // LE AGREGO EL OWNER
+            
             if (!data.title || !data.code || !data.description || !data.stock || !data.price || !data.thumbnails || !data.category) {
                 CustomError.createError({
                     name: 'INVALID DATA ERROR',
@@ -115,6 +125,13 @@ export default class ProductController {
     deleteProduct = async (req, res) => {
         try {
             const pID = req.params.pID
+            if(req.user && req.user.role == "premium"){
+                const uID = req.user.email
+                const product = await ManejadorDeProductos.getProduct(pID)
+                if( uID != product.owner){
+                    return res.send({status:'error',message:'You are not authorized to delete other people´s products'})
+                }
+            }
             const deleted = await ManejadorDeProductos.deleteProduct(pID)
             if (deleted.deletedCount == 0) {
                 CustomError.createError({

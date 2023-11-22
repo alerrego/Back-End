@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
     password : String,
     role: {
         type: String,
-        default: "user"
+        default: "user",
+        enum: ["user","admin","premium"]
     },
     active: {
         type: Boolean,
@@ -23,6 +24,14 @@ const userSchema = new mongoose.Schema({
     cartID: {
         type: mongoose.Schema.Types.ObjectId,
                 ref: "carts"
+    },
+    tokenPassword: {
+        type: String,
+        default:null
+    },
+    expirationTokenTime: {
+        type:Number,
+        default:null
     }
 })
 

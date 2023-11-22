@@ -1,6 +1,8 @@
-import { ManejadorDeCarritos } from "../dao/mongo/managers/index.js"
-import {transport} from "../utils/utils.js"
+import { ManejadorDeCarritos, ManejadorDeProductos } from "../dao/mongo/managers/index.js"
+import {transport} from "../utils.js"
 import config from "../config/config.js";
+
+import { userModel } from "../models/user.js";
 
 //ERRORS
 import EnumerationErrors from "../services/errors/enum.js";
@@ -50,6 +52,21 @@ export default class CartController{
         try {
             const cID = req.params.cID;
             const pID = req.params.pID;
+
+            if(req.user.role == "premium"){
+                const product = await ManejadorDeProductos.getProduct(pID)
+                if(!product){
+                    CustomError.createError({
+                        name: 'INVALID cartID or productID',
+                        cause: addProductErrorInfo(cID,pID),
+                        message: "Error trying to add product",
+                        code: EnumerationErrors.NOT_FOUND
+                    })
+                }
+                if(product.owner == req.user.email){
+                    return res.send({status:'error',message:'You are not allowed to add your own products'})
+                }
+            }
     
             const cart = await ManejadorDeCarritos.addProduct(cID,pID);
             if (cart === null) {
