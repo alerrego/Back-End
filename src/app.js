@@ -29,6 +29,9 @@ import {ManejadorDeProductos} from "./dao/mongo/managers/index.js"
 
 import { addLogger } from './utils/logger.js';
 
+import swaggerJSDoc from 'swagger-jsdoc';
+import SwaggerUiOptions from 'swagger-ui-express';
+
 
 const app = express()
 
@@ -70,6 +73,21 @@ app.use(express.static(__dirname+'/public'));
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views');
 app.set('view engine', 'handlebars');
+
+//SWAGGER
+const swaggerOptions = {
+    definition:{
+      openapi:"3.0.1",
+      info:{
+        title:"Documentation",
+        description:"API with swagger"
+      }
+    },
+    apis:[`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+
 //RUTAS
 app.use('/api/products' , productRouter);
 app.use('/api/carts', cartRouter);
@@ -77,6 +95,7 @@ app.use('/', viewsRouter);
 app.use('/api/sessions',sessionRouter);
 app.use('/',loggerRouter);
 app.use('/api/users',usersRouter)
+app.use('/api/docs',SwaggerUiOptions.serve,SwaggerUiOptions.setup(specs))
 
 const server = app.listen(config.port, () =>{
     console.log('En linea desde el puerto '+config.port)
