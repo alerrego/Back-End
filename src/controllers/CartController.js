@@ -89,7 +89,7 @@ export default class CartController{
         try {
             const cID = req.params.cID
             await ManejadorDeCarritos.deleteCart(cID)
-            res.send({ status: 'succes', message: `the cart of ID ${cID} are deleted` })
+            res.send({ status: 'success', message: `the cart of ID ${cID} are deleted` })
         } catch (error) {
             req.logger.error(error)
             res.status(500).send({ status: 'error' })

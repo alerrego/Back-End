@@ -64,7 +64,7 @@ router.delete('/logOut', async(req,res) =>{
 router.get('/current',passport.authenticate('jwt',{session:false}),async(req,res) =>{
     const result = new UserDTO(req.user.user)
     req.user = result
-    res.send(result)
+    res.send({status:'success',payload:result})
 })
 
 router.post('/sendMailForgotPassword',async(req,res) =>{

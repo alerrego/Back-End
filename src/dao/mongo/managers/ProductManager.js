@@ -34,7 +34,7 @@ export default class ProductManager{
             const newProduct = await productModel.create(data)
             return newProduct
         } catch (error) {
-            throw error
+            return error
         }
     }
     addProducts = async (data) => {

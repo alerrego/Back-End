@@ -45,7 +45,7 @@ export const currentUser = (req,res,next) => {
       if (err) {
         return res.status(401).json({status:'error',message:'invalid token'});
       } else {
-        if(decoded.user.role == "user" && decoded.user.email != config.adminName){//decoded datos del token
+        if((decoded.user.role == "user"||decoded.user.role == "premium") && decoded.user.email != config.adminName){//decoded datos del token
             next()
         }
         else{

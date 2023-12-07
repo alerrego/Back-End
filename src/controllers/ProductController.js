@@ -74,7 +74,17 @@ export default class ProductController {
                     code: EnumerationErrors.INVALID_TYPES_ERROR
                 })
             }
-            const newProduct = await ManejadorDeProductos.addProduct(data)
+            let product = {
+                title: data.title,
+                description:data.description,
+                price:data.price,
+                stock:data.stock,
+                category:data.category,
+                thumbnails:data.thumbnails,
+                code:data.code,
+                owner:data.owner
+            }
+            const newProduct = await ManejadorDeProductos.addProduct(product)
             if (!newProduct) {
                 return res.send({ status: "error", message: "data incorrect" })
             }
@@ -82,7 +92,7 @@ export default class ProductController {
             res.send({ status: "success", payload: newProduct })
         } catch (error) {
             req.logger.error(error)
-            res.send({ status: "error", error:error })
+            res.send({ status: "error", message:error })
         }
     }
     addProducts = async (req, res) => {
