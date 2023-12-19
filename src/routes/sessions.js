@@ -50,6 +50,7 @@ router.get('/failregister',(req,res) =>{
 })
 
 router.delete('/logOut', async(req,res) =>{
+    await userModel.updateOne({_id:req.user._id},{last_connection:new Date().toString()})//LE ACTUALIZO LA ULT CONECCION
     req.user = null;
     res.clearCookie('tokenCookie');//ELIMINO EL TOKEN
     req.session.destroy(err => {

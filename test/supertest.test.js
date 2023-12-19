@@ -61,9 +61,6 @@ describe("Testing App", () => {
             expect(statusCode)
         })
     })
-    setTimeout(function() {
-        // Agrego pausa asi no satura
-      }, 5000)
     describe('products test', () => {
         let pID;
         it("When we do a GET in /api/products we must obtain the array of products", async () => {
@@ -92,11 +89,10 @@ describe("Testing App", () => {
                 stock:10,
                 category: "Panaderia",
                 code: "4A1",
-                owner:"admin",
-                thumbnails:[]
+                thumbnails: []
             }
-            const {_body} = await requester.post("/api/products").send(mock).set('Authorization', `Bearer ${bearer}`).set('Content-Type', 'application/json')
-            console.log(_body.payload._id)
+            const {_body} = await requester.post("/api/products").set('Authorization', `Bearer ${bearer}`).send(mock)
+            expect(_body.payload).to.be.ok
             })
         it("When you make a PUT in /api/products/:pid the product should be updated correctly",async()=>{
             const update = {
@@ -110,9 +106,6 @@ describe("Testing App", () => {
             expect(statusCode).to.be.eql(200)
         })
     })
-    setTimeout(function() {
-        // No hay código específico a ejecutar durante la pausa
-      }, 5000)
     describe("carts test",()=>{
         let bearer;
         let cID;
@@ -143,16 +136,20 @@ describe("Testing App", () => {
         it("When a PUT is made in /api/carts/:cid/product/:pid a product should be added to the cart",async()=>{
             let pID = "657237ba5f6c8471879b47b8"
             const {_body} = await requester.put(`/api/carts/${cID}/product/${pID}`).set('Authorization', `Bearer ${bearer}`).set('Content-Type', 'application/json')
-            console.log(_body)
-            expect(_body.payload)
+            expect(_body.payload).to.be.ok
         })
         it("When a DELETE is performed in /api/carts/:cid/product/:pid it should be updated to remove the product from the cart",async()=>{
             let pID = "657237ba5f6c8471879b47b8"
             const {_body} = await requester.delete(`/api/carts/${cID}/product/${pID}`).set('Authorization', `Bearer ${bearer}`).set('Content-Type', 'application/json')
-            expect(_body.payload)
+            expect(_body).to.be.ok
+        })
+        it("When a PUT is made in /api/carts/:cid/product/:pid a product should be added to the cart to realize purchase",async()=>{
+            let pID = "657237ba5f6c8471879b47b8"
+            const {_body} = await requester.put(`/api/carts/${cID}/product/${pID}`).set('Authorization', `Bearer ${bearer}`).set('Content-Type', 'application/json')
+            expect(_body.payload).to.be.ok
         })
         it("When a POST is made in /api/carts/purchase/:cid the purchase of the products in the cart should be completed",async()=>{
-            const {_body} = await requester.post(`/api/carts/puchase/${cID}`).set('Authorization', `Bearer ${bearer}`)
+            const {_body} = await requester.post(`/api/carts/${cID}/purchase`).set('Authorization', `Bearer ${bearer}`)
             expect(_body.payload)
         })
         it("When a POST is made to /api/carts a new cart should be generated",async()=>{

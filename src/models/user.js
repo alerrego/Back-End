@@ -32,6 +32,26 @@ const userSchema = new mongoose.Schema({
     expirationTokenTime: {
         type:Number,
         default:null
+    },
+    documents:[
+        {
+            name:{
+                type:String,
+                required:true
+            },
+            reference:{
+                type:String,
+                required:true
+            }
+        }
+    ],
+    last_connection:{
+        type:String,
+        default:null
+    },
+    documents_load:{
+        type:Boolean,
+        default:false
     }
 })
 

@@ -53,7 +53,7 @@ export default class CartController{
             const cID = req.params.cID;
             const pID = req.params.pID;
 
-            if(req.user.role == "premium"){
+            if(req.user && req.user.role == "premium"){
                 const product = await ManejadorDeProductos.getProduct(pID)
                 if(!product){
                     CustomError.createError({

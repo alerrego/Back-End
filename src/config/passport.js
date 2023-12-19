@@ -92,6 +92,8 @@ const initializePassport = () =>{
             if(!isValidPassword(user,password)){
                 return done(null,false)
             }
+            user.last_connection = new Date().toString()
+            await userModel.updateOne({_id:user._id},user)//LE ACTUALIZO LA ULTIMA CONECCION
             return done(null,user)
         }catch(err){
             return done(err)

@@ -74,3 +74,17 @@ export const generateTokenForgotPassword = () =>{
     const expirationTokenTime = Date.now() + 3600000;
     return {tokenPassword,expirationTokenTime}
 }
+
+//MULTER
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,`${__dirname}/public/${req.query.uploadType}`)
+    },
+    filename: function(req,file,cb){
+    cb(null, `${file.originalname}`);
+    }
+})
+
+export const uploader = multer({storage}).array('uploadedFiles')

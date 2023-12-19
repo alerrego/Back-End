@@ -60,7 +60,7 @@ export default class ProductController {
             let data = req.body
             let owner = "admin"
             
-            if(req.user.role == "premium"){
+            if(req.user && req.user.role == "premium"){
                 owner = req.user.email
             }
 
