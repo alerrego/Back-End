@@ -1,9 +1,9 @@
-<h1>You see the Cart: {{cID}}</h1>
-<p class="product-list">Products list: </p>
-<div class="products">
+<h3 class="cart-title">You see the Cart: {{cID}}</h3>
+<p class="products-list-text">Products list: </p>
+<div class="products-cards">
         {{#each products}}
     <div class="card">
-        <div class="card-images">
+        <div class="card-image">
             <img src={{this.productID.thumbnails}} alt="image of product">
         </div>
         <div class="card-text">
@@ -15,12 +15,14 @@
             <p>Categoria: {{this.productID.category}}</p>
             <p>ID: {{this._id}}</p>
             <p>Quantity: {{this.quantity}}</p>
+        <div class="card-btn">
+            <a href="/delete/cart/{{../cID}}/product/{{this.productID._id}}">Delete product</a>
         </div>
-        <a href="/delete/cart/{{../cID}}/product/{{this.productID._id}}">Delete product</a>
+        </div>
     </div>                                            
     {{/each}}
 </div>
 <div class="return-products">
-    <a href="/products">Return to products</a>
-    <a href="/purchase/{{cID}}">Purchase</a>
+    <a href="/products" class="return-btn">Return to products</a>
+    <a href="/purchase/{{cID}}" class="purchase-btn">Purchase</a>
 </div>

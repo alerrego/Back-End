@@ -1,7 +1,28 @@
 import {ManejadorDeUsuarios} from "../dao/mongo/managers/index.js"
+import UserDTO from "../dao/DTOs/user.js"
+import { transport } from "../utils.js"
+import config from "../config/config.js"
 
 export default class UserController{
     constructor(){}
+    getUser = async(req,res) =>{
+        const uID = req.params.uID
+        const user = await ManejadorDeUsuarios.getUser(uID)
+        if(!user){
+            return res.status(404).send({status:'error',message:'User not found'})
+        }
+        res.status(200).send({status:"success",payload:user})
+    }
+    getUsers = async(req,res) =>{
+        const users = await ManejadorDeUsuarios.getUsers()
+        if(!users){
+            return res.send({status:'error',message:'i can´t find users'})
+        }
+        const usersDTO = users.map(user =>{
+            return new UserDTO(user)
+        })
+        res.send({status:'success',payload:usersDTO})
+    }
     updatePremium = async(req,res) =>{
         const uID = req.params.uID
 
@@ -39,5 +60,40 @@ export default class UserController{
             return res.send({status:'error',messsage:'user ID are invalid'})
         }
         res.send({status:'sucess',message:'you uploaded documents'})
+    }
+    deleteUser = async(req,res) =>{
+        const uID = req.params.uID
+
+        const user = await ManejadorDeUsuarios.deleteUser(uID)
+
+        if(!user){
+           return res.send({status:'error',message:'ID not found'})
+        }
+        res.send({status:'success',message:'User deleted correctly'})
+    }
+    deleteInactives = async(req,res) =>{
+        const inactives = await ManejadorDeUsuarios.deleteInactives()
+
+        if(!inactives){
+            res.send({status:'error',message:'you cant deleted inactive users'})
+        }
+
+        if(Array.isArray(inactives)){
+            for (let index = 0; index < inactives.length; index++) {
+                const element = inactives[index];
+                let mail = await transport.sendMail({
+                    from: config.mails_correo,
+                    to: element,
+                    subject: "You were eliminated",
+                    html:`<div>
+                            <p>We are contacting you to inform you that your account has been terminated due to inactivity for 2 days.</p>
+                         </div>`,
+                    attachments:[]
+                })
+                
+            }
+            req.logger.info("your deleted inactive users")}
+
+        res.send({status:'success',message:'you deleted inactive users'})
     }
 }

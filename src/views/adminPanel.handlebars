@@ -1,0 +1,47 @@
+<h3 class="adminPanel-text">Admin panel: </h3>
+<div class="adminPanelContainer">
+    <div class="findUser">
+        <h3>Find User: </h3>
+        <p>Enter a user ID to search for them in the database</p>
+        <form id="findUserForm">
+            <label>ID: </label>
+            <input type="text" name="findUserInput" id="findUserInput">
+            <input type="submit">
+        </form>
+    </div>
+    <div class="roleModification">
+        <h3>Role modification: </h3>
+        <p>To convert a "user" user to "premium", enter the ID</p>
+        <form id="toPremiumForm">
+            <label>ID: </label>
+            <input type="text" name="toPremium" id="toPremium">
+            <input type="submit">
+        </form>
+        <br>
+        <p>To convert a "premium" user to "user", enter the ID</p>
+        <form id="toUserForm">
+            <label>ID: </label>
+            <input type="text" name="toUser" id="toUser">
+            <input type="submit">
+        </form>
+    </div>
+    <div class="deleteUser">
+        <h3>Delete user: </h3>
+        <p>To delete a user enter the ID</p>
+        <form id="deleteForm">
+            <label>ID: </label>
+            <input type="text" name="toDelete" id="toDelete">
+            <input type="submit">
+        </form>
+    </div>
+    <div class="deleteInactives">
+        <h3>Delete inactive users: </h3>
+        <p>To eliminate users who are inactive for 48 or more hours, click the button</p>
+        <button id="btnDelete">Delete</button>
+    </div>
+</div>
+<br>
+<a href="/products" class="return-btn-admin">Return to products</a>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/adminPanel.js"></script>

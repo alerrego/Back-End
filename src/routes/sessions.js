@@ -55,7 +55,7 @@ router.delete('/logOut', async(req,res) =>{
     res.clearCookie('tokenCookie');//ELIMINO EL TOKEN
     req.session.destroy(err => {
         if(!err){
-            res.send({status:"success",message:"you are deslogued"})
+            res.status(200).send({status:"success",message:"you are deslogued"})
         }else{
             res.send({status:'LogOut err',body:err})
         }

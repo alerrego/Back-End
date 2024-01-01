@@ -61,5 +61,12 @@ export default class ProductManager{
             return error
         }
     }
+    getOwner = async(pID) =>{
+        const product = await productModel.findById(pID)
+        if(!product){
+            return null
+        }
+        return product.owner
+    }
     
 } 

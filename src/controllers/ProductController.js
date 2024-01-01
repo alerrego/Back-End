@@ -1,13 +1,13 @@
 import { ManejadorDeProductos } from "../dao/mongo/managers/index.js"
 import ProductDTO from "../dao/DTOs/product.js";
-import { generateProducts } from "../utils.js"
+import { generateProducts, transport } from "../utils.js"
 
-import { userModel } from "../models/user.js";
 
 //MANEJO ERRORES
 import EnumerationErrors from "../services/errors/enum.js";
 import CustomError from "../services/errors/CustomError.js";
 import { createProductErrorInfo, getProductErrorInfo } from "../services/errors/info.js";
+import config from "../config/config.js";
 
 export default class ProductController {
     constructor() { }
@@ -137,11 +137,13 @@ export default class ProductController {
             const pID = req.params.pID
             if(req.user && req.user.role == "premium"){
                 const uID = req.user.email
+                owner = req.user.email
                 const product = await ManejadorDeProductos.getProduct(pID)
                 if( uID != product.owner){
                     return res.send({status:'error',message:'You are not authorized to delete other people´s products'})
                 }
             }
+            const owner = await ManejadorDeProductos.getOwner(pID)
             const deleted = await ManejadorDeProductos.deleteProduct(pID)
             if (deleted.deletedCount == 0) {
                 CustomError.createError({
@@ -149,6 +151,17 @@ export default class ProductController {
                     cause: getProductErrorInfo(pID),
                     message: 'error trying to search for the product',
                     code: EnumerationErrors.NOT_FOUND
+                })
+            }
+            if(owner != "admin"){
+                let mail = await transport.sendMail({
+                    from: config.mails_correo,
+                    to: owner,//OJO CON UTILIZAR CORREOS QUE NO EXISTEN TIRA ERROR @YOPMAIL
+                    subject: 'A product you owned was deleted',
+                    html:`<div>
+                            <p>The product with ID ${pID} was deleted</p>
+                         </div>`,
+                    attachments:[]  
                 })
             }
             req.logger.info("You deleted correctly")

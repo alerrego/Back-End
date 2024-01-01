@@ -12,7 +12,7 @@ router.post('/', cartService.getNewCart)
 
 router.post('/:cID/purchase',currentUser, cartService.purchase)
 
-router.put('/:cID/product/:pID',isPremiumOrAdmin,cartService.addProduct)
+router.put('/:cID/product/:pID',currentUser,cartService.addProduct)
 
 router.delete('/:cID',cartService.deleteCart)
 

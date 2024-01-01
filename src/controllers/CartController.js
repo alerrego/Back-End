@@ -2,7 +2,6 @@ import { ManejadorDeCarritos, ManejadorDeProductos } from "../dao/mongo/managers
 import {transport} from "../utils.js"
 import config from "../config/config.js";
 
-import { userModel } from "../models/user.js";
 
 //ERRORS
 import EnumerationErrors from "../services/errors/enum.js";

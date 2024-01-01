@@ -6,16 +6,20 @@
         <p>Role: {{user.role}}</p>
         <br>
         <div class="buttons-redirection-products">
-            <a href="/login" id="logOut">Log Out</a>
-            <a href="/cart/{{user.cartID}}">Cart</a>
+                <a href="/login" id="logOut" class="logOutBtn">LogOut</a>
+                {{#unless isAdmin}}
+                <a href="/cart/{{user.cartID}}" class="cartBtn">Cart</a>
+                {{else}}
+                <a href="/adminpanel" class="adminBtn">Admin</a>
+                {{/unless}}
         </div>
     </div>
-    <p class="product-list">Products list: </p>
+    <p class="products-list-text">Products list: </p>
     <br>
-    <div class="products">
+    <div class="products-cards">
         {{#each this.docs}}
     <div class="card">
-        <div class="card-images">
+        <div class="card-image">
             <img src={{this.thumbnails}} alt="image of product">
         </div>
         <div class="card-text">
@@ -26,7 +30,9 @@
             <p>Stock: {{this.stock}}</p>
             <p>Categoria: {{this.category}}</p>
             <p>ID: {{this._id}}</p>
+        <div class="card-btn">
             <a href="/cart/{{../user.cartID}}/product/{{this._id}}">Add to cart</a>
+        </div>
         </div>
     </div>                                            
     {{/each}}

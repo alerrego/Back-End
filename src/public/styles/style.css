@@ -68,84 +68,170 @@
     
 }
 
+/*CHANGE PASSWORD*/
+.change-container{    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: 6px;
+    padding: 10px;
+    width: 97.5%;
+}
+
+.change-div{
+    border: black 2px solid;
+    padding: 10px;
+    background-color: rgb(190, 183, 183);
+    padding: 10px;
+}
+
+.change-form{
+    border: black 2px solid;
+    padding: 10px;
+    background-color: rgb(190, 183, 183);
+    padding: 10px;
+}
+
 /*PRODUCTS VIEW*/
 
-.products{
+.products-page{
     display: flex;
     flex-direction: column;
-    padding: 10px;
     align-items: center;
     justify-content: center;
 }
 
-.products-page .user-information{
+.user-information{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 120px;
-    background-color: gray;
-}
-
-.products-page .user-information p{
-    padding: 20px;
-    font-size: 25px;
-    color: black;
-}
-
-.products-page .user-information a{
-    text-decoration: none;
-    padding: 10px;
-    font-size: 25px;
-    border: 2px solid black;
-    color: white;
-    background-color: black;
-}
-
-.products-page .user-information .buttons-redirection-products{
-    margin: 15px;
-}
-
-.product-list{
-    background-color: black;
-    color: white;
-    text-align: center;
-    font-size: 30px;
-}
-
-.products{
-    flex-wrap: wrap;
     flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: gray;
+    padding: 15px;
 }
 
-.card{
+.user-information p{
     margin: 10px;
-    border: 2px solid black;
-    height: 350;
-    width: 250px;
-    font-size: 18px;
-}
-
-.card h3{
     font-size: 20px;
 }
 
-.card a{
+.buttons-redirection-products{
+    margin: 5px;
+}
+
+.logOutBtn{
+    margin: 5px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
     background-color: black;
+    text-decoration: none;
+}
+
+.cartBtn{
+    margin: 5px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
+    background-color: black;
+    text-decoration: none;
+}
+
+.adminBtn{
+    margin: 5px;
+    padding: 10px;
+    color: white;
+    font-size: 15px;
+    background-color: black;
+    text-decoration: none;
+}
+
+.products-list-text{
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+}
+
+.products-cards{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    flex-wrap: wrap;
+    margin: 5px;
+}
+
+.card{
+    border: 2px solid black;
+    height: 247px;
+    width: 200px;
+    margin: 5px;
+}
+
+.card-image{
+    height: 100px;
+    width: 200px;
+}
+
+.card-text{
+    height: 200px;
+    width: 200px;
+}
+
+.card p{
+    font-size: 14px;
+}
+
+.card-btn{
+    background-color: black;
+    width: 100%;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    height: 30px;
+    width: 200px;
+}
+
+.card-btn a{
+    width: 100%;
     color: white;
     text-decoration: none;
 }
+
+
 
 /* CART VIEW */
 
 .return-products{
     margin: 5px;
-    padding: 5px;
+    padding: 10px;
 }
-.return-products a{
-    background-color: black;
+.return-products{
     color: white;
     font-size: 20px;
+}
+
+.cart-title{
+    background-color: gray;
+    font-size: 22px;
+}
+
+.purchase-btn{
+    background-color: green;
+    color: white;
     text-decoration: none;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.return-btn{
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 5px;
 }
 
 /* INCOMPLETE PURCHASE */
@@ -207,4 +293,34 @@
     font-size: 24px;
     height: 610px;
     width: 100%;
+}
+
+/* ADMIN PANEL */
+
+.adminPanel-text{
+    font-size: 20px;
+    padding: 10px;
+    margin: 5px;
+}
+
+.adminPanelContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: gray;
+    border: 2px solid black;
+    padding: 5px;
+    margin: 5px;
+    width: 1250px;
+}
+
+.return-btn-admin{
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 10px;
+    margin: 5px;
+    font-size: 20px;
 }

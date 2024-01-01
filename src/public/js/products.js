@@ -2,7 +2,7 @@ const btn = document.getElementById('logOut');
 
 btn.addEventListener('click',e => {
     e.preventDefault();
-    fetch('api/sessions/logOut',{
+    fetch('/api/sessions/logOut',{
         method: 'DELETE',
         headers: {
             'Content-Type':'application/json'

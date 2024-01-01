@@ -11,12 +11,17 @@ const router = Router();
 router.get('/products',current,async(req,res) =>{
     const cID = req.user.cartID
     const page = req.query.page ?? 1;
-    let role = "user"
+    let role = "user";
+    let isAdmin = false;
 
     const {docs,prevPage,nextPage,prevLink,nextLink,hasPrevPage,hasNextPage} = await productModel.paginate({},{limit:10,page:page,lean:true})
 
-    if(req.user.email == config.adminName) role = "admin"
+    if(req.user.email == config.adminName){
+        role = "admin"
+        isAdmin = true
+    } 
     let user = {
+        _id: req.user._id,
         first_name : req.user.first_name,
         last_name : req.user.last_name,
         age: req.user.age,
@@ -25,11 +30,11 @@ router.get('/products',current,async(req,res) =>{
         cartID : req.user.cartID
     }
 
-    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user,cID})
+    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user,cID,isAdmin})
 
 })
 
-router.get('/cart/:cID',async(req,res) =>{
+router.get('/cart/:cID',current,async(req,res) =>{
     const cID = req.params.cID
     const cartToView = await ManejadorDeCarritos.getCart(cID)
     const products = cartToView.products
@@ -37,16 +42,20 @@ router.get('/cart/:cID',async(req,res) =>{
     res.render('cart',{products,cID})
 })
 
-router.get('/cart/:cID/product/:pID',async(req,res) =>{
+router.get('/cart/:cID/product/:pID',current,async(req,res) =>{
     const cID = req.params.cID
     const pID = req.params.pID
     await ManejadorDeCarritos.addProduct(cID,pID)
     const page = req.query.page ?? 1;
     let role = "user"
+    let isAdmin = false
 
     const {docs,prevPage,nextPage,prevLink,nextLink,hasPrevPage,hasNextPage} = await productModel.paginate({},{limit:10,page:page,lean:true})
 
-    if(req.user.email == config.adminName) role = "admin"
+    if(req.user.email == config.adminName){
+        role = "admin"
+        isAdmin = true
+    } 
     let user = {
         first_name : req.user.first_name,
         last_name : req.user.last_name,
@@ -56,10 +65,10 @@ router.get('/cart/:cID/product/:pID',async(req,res) =>{
         cartID : req.user.cartID
     }
 
-    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user,cID})
+    res.render('products',{docs,prevPage,nextPage,page,prevLink,nextLink,hasPrevPage,hasNextPage,user,cID,isAdmin})
 })
 
-router.get('/purchase/:cID',async(req,res) =>{
+router.get('/purchase/:cID',current,async(req,res) =>{
     const cID = req.params.cID;
     const ticketData = await ManejadorDeCarritos.purchase(cID)
     if(ticketData == -1){
@@ -85,6 +94,11 @@ router.get('/delete/cart/:cID/product/:pID',async(req,res) =>{
     
     res.render('cart',{products,cID})
 })
+
+router.get('/adminPanel',current,async(req,res) =>{
+    res.render('adminPanel')
+})
+
 
 router.get('/realTimeProducts',current,async(req, res) => {
     res.render('realTimeProducts')

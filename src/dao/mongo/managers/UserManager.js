@@ -1,7 +1,22 @@
 import {userModel} from '../../../models/user.js'
+import config from '../../../config/config.js'
 
 export default class UserManager{
     constructor(){}
+    getUsers = async() =>{
+        const users = await userModel.find()
+        if(!users){
+            return null
+        }
+        return users
+    }
+    getUser = async(uID) =>{
+        const user = await userModel.findById(uID)
+        if(!user){
+            return null
+        }
+        return user
+    }
     updatePremium = async(uID) =>{
         const user = await userModel.findOne({_id : uID})
         if(!user){
@@ -57,5 +72,39 @@ export default class UserManager{
             return true
         }
         return false
+    }
+    deleteUser = async(uID) =>{
+        const user = await userModel.findByIdAndDelete(uID)
+        if(!user){
+            return null
+        }
+        return user
+    }
+    deleteInactives = async() =>{
+        const users = await userModel.find()
+
+        if(!users){
+            return null
+        }
+        
+        const inactives = []
+        
+        users.forEach(user => {
+            const lastConnectionString = user.last_connection
+            const lastConnection = new Date(lastConnectionString) //CONVIERTO EL STRING A DATE
+            const currentDate = new Date()
+
+            const isInactive = currentDate - lastConnection >= 2*24*60*60*1000 // SI ES MAYOR O IGUAL A 2 DIAS
+            
+            if(isInactive && config.adminName != user.email){
+                inactives.push(user.email)
+            }
+        })
+        for (let index = 0; index < inactives.length; index++) {
+            const element = inactives[index];
+            await userModel.deleteOne({email:element})
+            
+        }
+        return inactives
     }
 }
